@@ -3,13 +3,6 @@
 <section class="hero cont is-fullheight">
   <div class="hero-body">
     <div class="container">
-      <div class="field">
-        <label class="label">Nome do estacionamento</label>
-        <div class="control">
-          <input v-bind="showBtn" class="input" type="text" v-model="data.namePark"
-            placeholder="Nome do Estacionamento">
-        </div>
-      </div>
 
       <div class="field">
         <label class="label">Nome da camera</label>
@@ -80,7 +73,6 @@
     data() {
       return {
         data: {
-          namePark: '',
           nameCam: '',
           camType: 1,
           urlCam: '',
@@ -93,7 +85,7 @@
     computed: {
       // uma função "getter" computada (computed getter)
       showBtn: function () {
-        if(this.data.namePark && this.data.nameCam && this.data.urlCam){
+        if(this.data.nameCam && this.data.urlCam){
           this.disabledBtn = false
         }else{
           this.disabledBtn = true

@@ -52,7 +52,8 @@ export default {
   data(){
     return {
       step: 1,
-      formData: {}
+      formData: {},
+      responseAddCamera: false
     }
   },
   methods: {
@@ -67,15 +68,23 @@ export default {
       const min = 99;
       const max = 999999;
       const random = Math.floor(Math.random() * (max - min + 1)) + min;
+      const self = this;
 
       this.formData = val;
+      this.formData.camId = String(new Date().getTime() + random)
       this.formData.path = store.path
-      this.formData.nameCam =  this.formData.nameCam.replace(/[^A-Z0-9]/ig, "_"), new Date().getTime() + random;
-      store.set(this.formData.nameCam, this.formData)
-    
-      client.loadCamera(this.formData, function(err, response) {
-        console.log(response)
+      store.set(this.formData.camId, this.formData)
+
+      client.addCamera(this.formData, function(err, response) {
+         self.responseAddCamera = response
       });
+      setInterval(function(){ 
+        if(self.responseAddCamera){
+            client.ReturnSpots({value: 1}, function(err, response){
+              console.log(response)
+            })
+        }
+      }, 7000);
 
     }
   }

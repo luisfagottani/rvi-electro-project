@@ -7,10 +7,13 @@
 <script>
   const Store = require('electron-store')
   const store = new Store();
+
+
   export default {
     name: 'rviapp',
     mounted() {
       this.$router.push({name: 'welcomeConfiguration'})
+      
       //  if(!store.has('camera01')){
       //    this.$router.push({name: 'welcomeConfiguration'})
       //  }else{

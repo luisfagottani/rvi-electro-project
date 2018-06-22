@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package park;
+
+service Parking {
+	rpc addCamera (addCameraRequest) returns (addCameraReply) {}
+	rpc ReturnSpots(StatusSpotsRequest) returns (StatusSpotsResponse ) {}
+}
+
+message StatusSpotsResponse {
+	message Spots {
+		int32 id = 1;
+		int32 statusSpot = 2;
+	}
+	repeated Spots spots = 1;
+}
+
+message StatusSpotsRequest{
+	int32 value = 1;
+}
+
+message StatusReply {
+//	message Spots {
+//		int32 id = 1;
+//		int32 value = 2;
+//	}
+//	repeated Spots spots = 1;
+	int32 teste = 1;
+}
+
+
+message addCameraRequest {
+	message Spots {
+		message Cords {
+			int32 x = 1;
+			int32 y = 2;
+		};
+
+		int32 id = 1;
+		repeated Cords cords = 2;
+	};
+
+	string camId = 1;
+	string nameCam = 2;
+	string path = 3;
+	string typeFile = 4;
+	string camType = 5;
+	string urlCam = 6;
+	repeated Spots spots = 7;
+}
+
+message addCameraReply {
+	bool response = 1;
+}
