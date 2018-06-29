@@ -36,14 +36,23 @@ export default {
         idSpot: 0
       }
     },
+    props: ['spotsData'],
     mounted() {
-      this.canvas = new fabric.Canvas('canvas_park');
+      window.canvas = this.canvas = new fabric.Canvas('canvas_park');
       this.canvas.setHeight(405);
       this.canvas.setWidth(720);
       this.canvas.selection = true;
       this.clickCanvas();
       this.mouseMove();
       this.mouseSelects();
+
+      if(this.spotsData.length > 0){
+        this.populateSpots();
+      }
+
+      this.canvas.__eventListeners["mouse:move"] = [];
+      this.$store.dispatch('setCanvas', this.canvas)
+      
     },
     methods: {
       addPoint: function(options) {
@@ -195,7 +204,6 @@ export default {
           o.selectable = true;
         });
       },
-      
       clickCanvas: function(){
         var self = this;
         this.canvas.on('mouse:down', function (options) {
@@ -319,6 +327,31 @@ export default {
             }
           });
           this.$emit("spots", this.spots)
+      },
+      populateSpots: function(){
+          this.canvas.clear();
+          this.addSpotStatus = false;
+          this.polygonMode = false;
+          this.pointArray = new Array();
+          this.lineArray = new Array();
+          this.activeLine = null;
+          this.activeShape = null;
+
+         for(var x = 0; x < this.spotsData.length; x++){
+            var polygon = new fabric.Polygon(this.spotsData[x].cords,{
+              stroke:'blue',
+              strokeWidth:1,
+              fill: 'rgba(0,0,255,0.3)',
+              opacity: 1,
+              hasBorders: true,
+              hasControls: false,
+              lockMovementX: true,
+              lockMovementY:  true,
+              id: this.spotsData[x].id
+            });
+            this.canvas.add(polygon);
+          }
+          this.canvas.renderAll();
       }
     }
 }

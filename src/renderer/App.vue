@@ -11,14 +11,12 @@
 
   export default {
     name: 'rviapp',
-    mounted() {
-      this.$router.push({name: 'welcomeConfiguration'})
-      
-      //  if(!store.has('camera01')){
-      //    this.$router.push({name: 'welcomeConfiguration'})
-      //  }else{
-      //    this.$router.push({name: 'teste'})
-      //  }
+    mounted() {      
+       if(Object.keys(store.get()).length < 1){
+         this.$router.push({name: 'welcomeConfiguration'})
+       }else{
+         this.$router.push({name: 'app'})
+       }
        
     }
   }

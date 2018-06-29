@@ -4,8 +4,8 @@ import Vuex from 'vuex'
 import modules from './modules'
 
 Vue.use(Vuex)
-
+export const strict = false
 export default new Vuex.Store({
   modules,
-  strict: process.env.NODE_ENV !== 'production'
+  strict: false
 })
