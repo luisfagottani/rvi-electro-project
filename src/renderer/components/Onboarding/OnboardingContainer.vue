@@ -74,6 +74,9 @@ export default {
       this.formData.camId = String(new Date().getTime() + random)
       this.formData.path = store.path
       store.set(this.formData.camId, this.formData)
+      if(this.formData.typeFile.length > 0){
+        this.formData.typeFile = "1"
+      }
       this.$store.dispatch('addCamera', this.formData)
       this.$router.push({name: 'app'})
 

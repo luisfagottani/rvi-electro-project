@@ -3,7 +3,8 @@
     <h2 class="title is-2">Demarque as vagas</h2>
     <div class="park-map">
       <FabricJs @spots="val => (this.formData.spots = val)"></FabricJs>
-      <video width="720" height="576"  autoplay :src="formData.urlCam"></video>
+      <video v-if="this.formData.camType == '2'" width="720" height="576"  autoplay :src="formData.urlCam"></video>
+      <img v-else style="-webkit-user-select: none;" :src="formData.urlCam" width="720" height="576">
     </div>
     <div class="field is-grouped">
       <p class="control">

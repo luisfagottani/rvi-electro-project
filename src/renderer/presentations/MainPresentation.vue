@@ -22,7 +22,6 @@ export default {
       AppContainer 
   },
   created () {
-      
       if(this.$store.state.Spots.parkingLot.length < 1){
         let camerasStorage = store.get();
         for (let cameraId in camerasStorage) {
