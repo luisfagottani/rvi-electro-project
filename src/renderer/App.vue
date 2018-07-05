@@ -8,7 +8,6 @@
   const Store = require('electron-store')
   const store = new Store();
 
-
   export default {
     name: 'rviapp',
     mounted() {      
@@ -25,6 +24,10 @@
 <style>
   body {
     overflow: hidden;
+    background-color: #1d233c;
+    height: 100vh;
+    -ms-overflow-style: scrollbar;
+    -webkit-app-region:drag;
   }
   
   /*! bulma.io v0.7.1 | MIT License | github.com/jgthms/bulma */
@@ -9698,4 +9701,17 @@
     padding: 3rem 1.5rem 6rem;
   }
   /*# sourceMappingURL=bulma.css.map */
+
+  input[type="submit"],
+  input[type="reset"],
+  input[type="button"],
+  input[type="text"],
+  button,
+  textarea {
+    -webkit-app-region: no-drag;
+  }
+
+  * {
+    -webkit-user-select: none;
+  }
 </style>

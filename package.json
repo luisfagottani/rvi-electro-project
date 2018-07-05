@@ -62,10 +62,13 @@
     "global": "^4.3.2",
     "grpc": "1.10.0",
     "grpc-tools": "^1.6.6",
+    "node-sass": "^4.9.1",
     "python-shell": "^0.5.0",
+    "sass-loader": "^7.0.3",
     "vue": "^2.3.3",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
+    "vue-svg-loader": "^0.5.0",
     "vuex": "^2.3.1"
   },
   "devDependencies": {
