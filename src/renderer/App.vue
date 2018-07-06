@@ -10,10 +10,26 @@
 
   export default {
     name: 'rviapp',
-    mounted() {      
+    created() {      
        if(Object.keys(store.get()).length < 1){
          this.$router.push({name: 'welcomeConfiguration'})
        }else{
+  
+        let camerasStorage = store.get();
+        let cont = 0;
+        for (let cameraId in camerasStorage) {
+          // skip loop if the property is from prototype
+          
+          if (typeof(camerasStorage.cameraId) !== 'undefined') continue;
+          
+            if(cont == 0){
+              this.$store.dispatch('setCamera', cameraId)
+            }
+
+            let obj = camerasStorage[cameraId];
+            this.$store.dispatch('addCamera', obj)
+            cont++;
+        }
          this.$router.push({name: 'ao-vivo'})
        }
        

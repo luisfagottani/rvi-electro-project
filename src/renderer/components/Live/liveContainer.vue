@@ -2,7 +2,7 @@
   <div>
     <div class="staging">
       <showCamera></showCamera>
-      <infoSpots></infoSpots>
+      <infoSpots cameraId=this.$store.getters.getActualCamera></infoSpots>
     </div>
   </div>
 </template>
@@ -17,12 +17,7 @@ export default {
   components: {
     infoSpots,
     showCamera
-  },
-  data(){
-    return {
-     formData: {}
-    }
-  },
+  }
 }
 </script>
 
@@ -30,7 +25,7 @@ export default {
   .staging {
     /* Box Model */
     display: flex;
-    height: 80vh;
+    height: auto;
     margin-top: 30px;
   }
 </style>

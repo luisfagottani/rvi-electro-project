@@ -2,7 +2,7 @@
   <div class="dash">
     <ul class="dash__infos">
       <li class="dash__item">
-        00
+        {{totalSpots}}
         <span>Número </br>de Vagas</span>
       </li>
 
@@ -29,6 +29,11 @@ export default {
      formData: {}
     }
   },
+  computed: {
+    totalSpots() {
+      return this.$store.getters.getTotalSpots
+    }
+  }
 }
 </script>
 
@@ -36,7 +41,7 @@ export default {
   .dash {
     /* Box Model */
     display: flex;
-    height: 80%;
+    height: auto;
     width: 276px;
     align-self: center;
     justify-content: center;
@@ -59,6 +64,7 @@ export default {
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin-bottom: 20px;
 
       /* Typography */
       color: #fff;

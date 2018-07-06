@@ -1,8 +1,9 @@
 <template>
   <div class="camera-show">
-    <h1 class="camera-show__title">Camera 01</h1>
+    <h1 class="camera-show__title">{{camera.nameCam}}</h1>
     <div class="camera-show__palco">
-      
+      <video v-if="camera.camType == '2' " width="100%"  autoplay :src="camera.urlCam"></video>
+      <img v-else style="-webkit-user-select: none;" :src="camera.urlCam" width="720" height="576">
     </div>
   </div>
 </template>
@@ -12,11 +13,12 @@
                                        
 export default {
   name: 'showCamera',
+  props: ['cameraId'],
   data(){
     return {
-     formData: {}
+     camera: this.$store.getters.getCamera
     }
-  },
+  }
 }
 </script>
 
@@ -44,7 +46,6 @@ export default {
     &__palco {
       width: 100%;
       height: 90%;
-      background-color: #ffffff;
     }
   }
 </style>

@@ -20,18 +20,7 @@ export default {
   name: 'MainPresentation',
   components: {
       Menu
-  },
-  created () {
-      if(this.$store.state.Spots.parkingLot.length < 1){
-        let camerasStorage = store.get();
-        for (let cameraId in camerasStorage) {
-            // skip loop if the property is from prototype
-            if (typeof(camerasStorage.cameraId) !== 'undefined') continue;
-              let obj = camerasStorage[cameraId];
-              this.$store.dispatch('addCamera', obj)
-        }
-      }
-  },
+  }
 }
 </script>
 
