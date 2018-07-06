@@ -14,7 +14,7 @@
        if(Object.keys(store.get()).length < 1){
          this.$router.push({name: 'welcomeConfiguration'})
        }else{
-         this.$router.push({name: 'app'})
+         this.$router.push({name: 'ao-vivo'})
        }
        
     }

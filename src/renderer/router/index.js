@@ -13,7 +13,15 @@ export default new Router({
     {
       path: '/app',
       name: 'app',
-      component: require('@/presentations/mainPresentation').default
+      component: require('@/presentations/mainPresentation').default,
+      children: [
+        {
+          // when /app/ao-vivo is matched
+          path: 'ao-vivo',
+          name: 'ao-vivo',
+          component: require('@/components/app/appContainer').default
+        }
+      ]
     }
 
   ]

@@ -1,11 +1,10 @@
 <template>
   <div>
-    <Menu></Menu>
     <div class="cont">
       <h2 class="title is-2">{{this.formData.nameCam}}</h2>
       <div class="park-map">
-        <!-- <FabricJs :spotsData="this.formData.spots"></FabricJs>
-        <video v-if="this.formData.camType == '2' " width="720" height="576"  autoplay :src="formData.urlCam"></video>
+        <!-- <FabricJs :spotsData="this.formData.spots"></FabricJs> -->
+        <!-- <video v-if="this.formData.camType == '2' " width="720" height="576"  autoplay :src="formData.urlCam"></video>
         <img v-else style="-webkit-user-select: none;" :src="formData.urlCam" width="720" height="576"> -->
       </div>
     </div>
@@ -14,8 +13,6 @@
 
 
 <script>
-
-import Menu from './Menu'
 import FabricJs from '../FabricJs/FabricJs'
 
 const fs = require('fs')
@@ -40,9 +37,8 @@ var client = new service.Parking('localhost:50060',
 
                                        
 export default {
-  name: 'OnboardingContainer',
+  name: 'appContainer',
   components: {
-      Menu,
       FabricJs
   },
   data(){
@@ -52,6 +48,7 @@ export default {
   },
   created() {
     this.formData = this.$store.state.Spots.parkingLot[0];
+    debugger;
     client.addCamera(this.formData, function(err, response) {
         self.responseAddCamera = response
     });

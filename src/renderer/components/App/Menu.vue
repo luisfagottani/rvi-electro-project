@@ -1,20 +1,28 @@
 <template>
     <ul class="menu">
+        <li class="menu__item">
+          <router-link to="ao-vivo">
+            <img :src="MonitorIcon" alt="">
+            <span>Ao Vivo</span>
+          </router-link>
+        </li>
       <li class="menu__item">
-        <img :src="MonitorIcon" alt="">
-        <span>Ao Vivo</span>
+        <router-link to="add-camera">
+          <img :src="CameraIcon" alt="">
+          <span>Cadastrar</br> Camera</span>
+        </router-link>
       </li>
       <li class="menu__item">
-        <img :src="CameraIcon" alt="">
-        <span>Cadastrar</br> Camera</span>
+        <router-link to="backup">
+          <img :src="DownloadIcon" alt="">
+          <span>Backup</span>
+        </router-link>
       </li>
-      <li class="menu__item">
-        <img :src="DownloadIcon" alt="">
-        <span>Backup</span>
-      </li>
-      <li class="menu__item menu__item--settings">
-        <img :src="ConfiguracaoIcon" alt="">
-        <span>Ajustes</span>
+      <li class="menu__item menu__item--end">
+        <router-link to="settings">
+          <img :src="ConfiguracaoIcon" alt="">
+          <span>Ajustes</span>
+        </router-link>
       </li>
     </ul>
 </template>
@@ -45,11 +53,26 @@ export default {
     display: flex;
     flex-direction: column;
     width: 100%;
+    height: 100%;
+    justify-content: flex-start;
 
     /* Typography */
     text-align: center;
-
+    
     &__item {
+       &--end {
+        /* Box Model */
+        border-bottom: none;
+        margin-top: auto;
+      }
+    }
+    &__item a{
+
+      &.router-link-exact-active {
+        /* Visual */
+        background-color: #2c3049;
+      }
+
       /* Box Model */
       display: flex;
       flex-direction: column;
@@ -57,6 +80,7 @@ export default {
       align-items: center;
       border-bottom: 1px solid #292d42;
       height: 90px;
+      width: 100%;
 
       img {
         /* Box Model */
@@ -72,16 +96,14 @@ export default {
         line-height: 11px;
       }
 
-      &--settings {
-        /* Box Model */
-        border-bottom: none;
-      }
-
       &:hover {
+        /* Visual */
         cursor: pointer;
         transition: 0.3s all ease-in-out;
         background-color: #2c3049;
       }
+
+
     }
   }
 </style>
