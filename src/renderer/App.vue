@@ -27,6 +27,7 @@
     background-color: #1d233c;
     height: 100vh;
     -ms-overflow-style: scrollbar;
+    font-family: 'Open Sans', sans-serif;
     -webkit-app-region:drag;
   }
   

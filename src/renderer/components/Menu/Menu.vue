@@ -55,7 +55,6 @@ export default {
     width: 100%;
     height: 100%;
     justify-content: flex-start;
-
     /* Typography */
     text-align: center;
     

@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Menu from '../components/App/Menu.vue';
+import Menu from '../components/Menu/Menu.vue';
 
 const Store = require('electron-store')
 const store = new Store();
@@ -50,7 +50,7 @@ export default {
     /* Box Model */
     width: calc(100% - 70px);
     height: 100vh;
-    padding-top: 30px;
     float: left;
+    padding: 30px;
   }
 </style>
