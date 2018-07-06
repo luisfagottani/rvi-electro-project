@@ -1,25 +1,25 @@
 <template>
-  <AppContainer></AppContainer>
+  <div>
+    <div class="menu-area">
+      <Menu></Menu>
+    </div>
+    <div class="stage-area">
+      <router-view></router-view>
+    </div>
+  </div>
 </template>
 
 <script>
-import AppContainer from '../components/App/appContainer.vue';
-var PythonShell = require('python-shell');
-
-var options = {
-  mode: 'text',
-  pythonPath: '/Users/luis.agottani/anaconda2/envs/tcc/bin/python3',
-  pythonOptions: ['-u']
-};
+import Menu from '../components/App/Menu.vue';
 
 const Store = require('electron-store')
 const store = new Store();
 
 
 export default {
-  name: 'OnboardingContainer',
+  name: 'MainPresentation',
   components: {
-      AppContainer 
+      Menu
   },
   created () {
       if(this.$store.state.Spots.parkingLot.length < 1){
@@ -35,6 +35,22 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+  .menu-area {
+    /* Box Model */
+    width: 70px;
+    height: 100vh;
+    padding-top: 30px;
+    float:left;
 
+    /* Visual */
+    background-color:#0f1324;
+  }
+  .stage-area {
+    /* Box Model */
+    width: calc(100% - 70px);
+    height: 100vh;
+    padding-top: 30px;
+    float: left;
+  }
 </style>
