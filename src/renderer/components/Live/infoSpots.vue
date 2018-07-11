@@ -2,17 +2,17 @@
   <div class="dash">
     <ul class="dash__infos">
       <li class="dash__item">
-        {{totalSpots}}
+        {{allSpots}}
         <span>Número </br>de Vagas</span>
       </li>
 
       <li class="dash__item dash__item--empty">
-        --
+        {{emptySpots}}
         <span>Disponíveis</span>
       </li>
 
       <li class="dash__item dash__item--occupied">
-        --
+        {{occupiedSpots}}
         <span>Ocupadas</span>
       </li>
     </ul>
@@ -21,17 +21,35 @@
 
 
 <script>
-                                       
+
 export default {
   name: 'infoSpots',
   data(){
     return {
-     formData: {}
+     camera: this.$store.getters.getCamera,
     }
   },
   computed: {
-    totalSpots() {
-      return this.$store.getters.getTotalSpots
+    allSpots: function() {
+      return this.camera.spots.length
+    },
+    emptySpots: function() {
+       const spots = this.camera.spots
+        var total = 0;
+        spots.forEach(spot => {
+            if(spot.status == "0")
+              total += 1;
+        })
+        return total;
+    },
+    occupiedSpots: function() {
+      const spots = this.camera.spots
+      var total = 0;
+      spots.forEach(spot => {
+          if(spot.status == "1")
+            total += 1;
+      })
+      return total;
     }
   }
 }

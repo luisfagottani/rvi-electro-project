@@ -3,7 +3,6 @@
     <div class="cont">
       <h2 class="title is-2">{{this.formData.nameCam}}</h2>
       <div class="park-map">
-        <!-- <FabricJs :spotsData="this.formData.spots"></FabricJs> -->
         <!-- <video v-if="this.formData.camType == '2' " width="720" height="576"  autoplay :src="formData.urlCam"></video>
         <img v-else style="-webkit-user-select: none;" :src="formData.urlCam" width="720" height="576"> -->
       </div>
@@ -13,34 +12,10 @@
 
 
 <script>
-import FabricJs from '../FabricJs/FabricJs'
-
-const fs = require('fs')
-var grpc = require('grpc')
-var path = require('path')
-
-
-try {
-  var service
-  if (process.env.NODE_ENV == 'production'){
-    var PROTO_PATH = path.join(__dirname + '/src/project/protos/api.proto');
-    service = grpc.load(PROTO_PATH).park;
-  }else{
-    service = grpc.load('src/core/project/protos/api.proto').park;
-  }
-} catch (error) {
-  alert(error)
-}
-
-var client = new service.Parking('localhost:50060',
-                                       grpc.credentials.createInsecure());
 
                                        
 export default {
   name: 'appContainer',
-  components: {
-      FabricJs
-  },
   data(){
     return {
      formData: {}
@@ -48,7 +23,6 @@ export default {
   },
   created() {
     this.formData = this.$store.state.Spots.parkingLot[0];
-    debugger;
     client.addCamera(this.formData, function(err, response) {
         self.responseAddCamera = response
     });

@@ -55,6 +55,8 @@ export default {
     width: 100%;
     height: 100%;
     justify-content: flex-start;
+    -webkit-app-region:drag;
+
     /* Typography */
     text-align: center;
     
