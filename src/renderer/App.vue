@@ -8,16 +8,50 @@
   const Store = require('electron-store')
   const store = new Store();
 
+  const fs = require('fs')
+  const grpc = require('grpc')
+  const path = require('path')
+
+  try {
+    var service
+    if (process.env.NODE_ENV == 'production'){
+      const PROTO_PATH = path.join(__dirname + '/src/project/protos/api.proto');
+      service = grpc.load(PROTO_PATH).park;
+    }else{
+      service = grpc.load('src/core/project/protos/api.proto').park;
+    }
+  } catch (error) {
+    alert(error)
+  }
+
+  let client = new service.Parking('localhost:50060',grpc.credentials.createInsecure());
+
   export default {
     name: 'rviapp',
-    mounted() {      
-       if(Object.keys(store.get()).length < 1){
-         this.$router.push({name: 'welcomeConfiguration'})
-       }else{
-         this.$router.push({name: 'ao-vivo'})
-       }
-       
+    created() {      
+      if(Object.keys(store.get()).length < 1){
+        this.$router.push({name: 'welcomeConfiguration'})
+      }else{
+        let camerasStorage = store.get();
+        let cont = 0;
+        for (let cameraId in camerasStorage) {
+          // skip loop if the property is from prototype
+          if (typeof(camerasStorage.cameraId) !== 'undefined') continue;
+          
+            if(cont == 0){
+              this.$store.dispatch('setCamera', cameraId)
+            }
+
+            let obj = camerasStorage[cameraId];
+            this.$store.dispatch('addCamera', obj)
+            cont++;
+          }
+        this.$router.push({name: 'ao-vivo'})
+      }
+
+      this.$store.dispatch('setPythonApi', client)
     }
+
   }
 </script>
 
@@ -27,7 +61,7 @@
     background-color: #1d233c;
     height: 100vh;
     -ms-overflow-style: scrollbar;
-    -webkit-app-region:drag;
+    font-family: 'Open Sans', sans-serif;
   }
   
   /*! bulma.io v0.7.1 | MIT License | github.com/jgthms/bulma */

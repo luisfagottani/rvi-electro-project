@@ -1,23 +1,52 @@
 const state = {
   parkingLot: [],
-  canvas: {}
+  canvas: {},
+  camera_id: 0,
+  client: ''
 }
 
 const mutations = {
-  SET_CAMERA (state, camera) {
+  ADD_CAMERA (state, camera) {
       state.parkingLot.push(camera);
+  },
+  SET_CAMERA (state, camera_id) {
+    state.camera_id = camera_id
   },
   SET_CANVAS (state, canvas){
       state.canvas = canvas;
+  },
+  SET_PTYHON_API(state, client){
+    state.client = client;
+  }
+}
+
+
+let getters = {
+  getCamera(state){
+    return state.parkingLot.find(vaga => vaga.camId === state.camera_id)
+  },
+  
+  getCanvas(state){
+    return state.canvas
+  },
+
+  getClientApi(state){
+    return state.client
   }
 }
 
 const actions = {
   addCamera ({ commit }, camera) {
-    commit('SET_CAMERA', camera)
+    commit('ADD_CAMERA', camera)
   },
   setCanvas ({ commit }, canvas) {
     commit('SET_CANVAS', canvas)
+  },
+  setCamera({commit}, camera_id) {
+    commit('SET_CAMERA', camera_id);
+  },
+  setPythonApi({commit}, client){
+    commit('SET_PTYHON_API', client)
   }
   
 }
@@ -25,5 +54,6 @@ const actions = {
 export default {
   state,
   mutations,
-  actions
+  actions,
+  getters
 }

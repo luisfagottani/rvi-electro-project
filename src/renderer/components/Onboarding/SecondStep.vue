@@ -2,7 +2,7 @@
   <div class="cont">
     <h2 class="title is-2">Demarque as vagas</h2>
     <div class="park-map">
-      <FabricJs @spots="val => (this.formData.spots = val)"></FabricJs>
+      <!-- <FabricJs @spots="val => (this.formData.spots = val)"></FabricJs> -->
       <video v-if="this.formData.camType == '2'" width="720" height="576"  autoplay :src="formData.urlCam"></video>
       <img v-else style="-webkit-user-select: none;" :src="formData.urlCam" width="720" height="576">
     </div>
@@ -20,12 +20,12 @@
 </template>
 
 <script>
-  import FabricJs from '../FabricJs/FabricJs'
+  // import FabricJs from '../FabricJs/FabricJs'
   export default {
     name: 'SecondStep',
-    components: {
-      FabricJs
-    },
+    // components: {
+    //   FabricJs
+    // },
     props: ['formData'],
     methods: {
       backStep: function() {

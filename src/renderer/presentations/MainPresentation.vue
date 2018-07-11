@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Menu from '../components/App/Menu.vue';
+import Menu from '../components/Menu/Menu.vue';
 
 const Store = require('electron-store')
 const store = new Store();
@@ -20,18 +20,7 @@ export default {
   name: 'MainPresentation',
   components: {
       Menu
-  },
-  created () {
-      if(this.$store.state.Spots.parkingLot.length < 1){
-        let camerasStorage = store.get();
-        for (let cameraId in camerasStorage) {
-            // skip loop if the property is from prototype
-            if (typeof(camerasStorage.cameraId) !== 'undefined') continue;
-              let obj = camerasStorage[cameraId];
-              this.$store.dispatch('addCamera', obj)
-        }
-      }
-  },
+  }
 }
 </script>
 
@@ -50,7 +39,7 @@ export default {
     /* Box Model */
     width: calc(100% - 70px);
     height: 100vh;
-    padding-top: 30px;
     float: left;
+    padding: 30px;
   }
 </style>

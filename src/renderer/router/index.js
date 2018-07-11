@@ -19,7 +19,7 @@ export default new Router({
           // when /app/ao-vivo is matched
           path: 'ao-vivo',
           name: 'ao-vivo',
-          component: require('@/components/app/appContainer').default
+          component: require('@/components/Live/liveContainer').default
         }
       ]
     }

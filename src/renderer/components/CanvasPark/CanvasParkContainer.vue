@@ -1,19 +1,6 @@
 <template>
   <div class="canvas">
     <canvas id="canvas_park"></canvas>
-    <a @click="addSpot()" :class="['add-spot', {remove: addSpotStatus}, {remove: deleteSpotStatus }]">
-      <div class="corner">+</div>
-      <span class="title">Adicionar Vaga</span>
-    </a>
-    <a @click="cancelAddSpot()" :class="['edit-spot', {show: addSpotStatus}]">
-      <div class="corner"> X </div>
-      <span class="title">Cancelar</span>
-    </a>
-
-    <a @click="excludeSpot()" :class="['edit-spot', {show: deleteSpotStatus}]">
-      <div class="corner"> X </div>
-      <span class="title" >Excluir Vaga</span>
-    </a>
   </div>
 </template> 
 
@@ -21,7 +8,7 @@
 require('fabric')
 
 export default {
-    name: 'FabricJs',
+    name: 'CanvasParkContainer',
     data() {
       return {
         canvas: '',
@@ -32,25 +19,28 @@ export default {
         activeShape: false,
         addSpotStatus: false,
         deleteSpotStatus: false,
-        spots: [],
-        idSpot: 0
+        idSpot: 0,
+        spotsData: this.$store.getters.getCamera.spots
       }
     },
-    props: ['spotsData'],
     mounted() {
       window.canvas = this.canvas = new fabric.Canvas('canvas_park');
       this.canvas.setHeight(405);
       this.canvas.setWidth(720);
-      this.canvas.selection = true;
-      this.clickCanvas();
-      this.mouseMove();
-      this.mouseSelects();
+      this.canvas.selection = false;
+      // this.clickCanvas();
+      // this.mouseMove();
+      // this.mouseSelects();
 
       if(this.spotsData.length > 0){
         this.populateSpots();
       }
 
-      this.canvas.__eventListeners["mouse:move"] = [];
+      this.canvas.forEachObject(function(o) {
+        o.selectable = false;
+      });
+
+      // this.canvas.__eventListeners["mouse:move"] = [];
       this.$store.dispatch('setCanvas', this.canvas)
       
     },
