@@ -18,11 +18,11 @@
           <span>Backup</span>
         </router-link>
       </li>
-      <li class="menu__item menu__item--end">
-        <router-link to="settings">
+      <li @click="showModalConfigurate" class="menu__item menu__item--end">
+        <a href="#">
           <img :src="ConfiguracaoIcon" alt="">
           <span>Ajustes</span>
-        </router-link>
+        </a>
       </li>
     </ul>
 </template>
@@ -43,7 +43,12 @@ export default {
             DownloadIcon: DownloadIcon,
             ConfiguracaoIcon: ConfiguracaoIcon
         }
+    },
+  methods: {
+    showModalConfigurate: function() {
+      this.$store.dispatch('handleConfigurationModal')
     }
+  }
 }
 </script>
 
