@@ -1,23 +1,50 @@
 const state = {
-  showConfigurationState: false,
+  addCameraModal: false,
+  settingsModal: false,
+  editCameraModal: false
 }
 
 const mutations = {
-  CHANGE_STATE_CONFIGURATION_MODAL (state) {
-    state.showConfigurationState = !state.showConfigurationState
+  UPDATE_MODAL_STATE (state, nameModal) {
+    switch(nameModal){
+      case "addCameraModal":
+        state.addCameraModal = !state.addCameraModal
+        break;
+      case "settingsModal":
+        state.settingsModal = !state.settingsModal
+        break;
+      case "editCameraModal":
+        state.editCameraModal = !state.editCameraModal
+        break;
+
+      default:
+        break;
+    }
   },
 }
 
 
 let getters = {
-  getStatusConfiguration(state){
-    return state.showConfigurationState
-  }
+  getStatusModal: (state) => (nameModal) => {
+    switch(nameModal){
+      case "addCameraModal":
+        return state.addCameraModal;
+
+      case "settingsModal":
+        return state.settingsModal
+
+      case "editCameraModal":
+        return state.editCameraModal
+
+      default:
+        return 0;
+    }
+  },
 }
 
 const actions = {
-  handleConfigurationModal ({ commit }) {
-    commit('CHANGE_STATE_CONFIGURATION_MODAL')
+  toggleModal ({ commit }, nameModal) {
+    commit('UPDATE_MODAL_STATE', nameModal)
   },
   
 }

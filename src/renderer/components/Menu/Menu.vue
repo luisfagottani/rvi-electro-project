@@ -46,7 +46,7 @@ export default {
     },
   methods: {
     showModalConfigurate: function() {
-      this.$store.dispatch('handleConfigurationModal')
+      this.$store.dispatch('toggleModal', "settingsModal")
     }
   }
 }

@@ -1,4 +1,5 @@
 <template>
+
   <div class="modal">
     <div class="modal__content">
       <a @click="closeModal">FECHAR MODAL</a>
@@ -13,7 +14,7 @@ export default {
   name: 'ConfigureCore',
   methods: {
     closeModal: function() {
-      this.$store.dispatch('handleConfigurationModal')
+      this.$store.dispatch('toggleModal', "settingsModal")
     }
   }
 }

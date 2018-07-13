@@ -5,7 +5,7 @@
     </div>
     <div class="stage-area">
       <router-view></router-view>
-      <transition name="fade">
+      <transition name="fade" :duration="200">
         <ConfigureCore v-if="showConfiguration"></ConfigureCore>
       </transition>
     </div>
@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     showConfiguration: function() {
-      return this.$store.getters.getStatusConfiguration
+      return this.$store.getters.getStatusModal("settingsModal")
     }
   }
 }
@@ -38,7 +38,7 @@ export default {
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
   }
-  .fade-enter, .fade-leave-to /* .fade-leave-active em versões anteriores a 2.1.8 */ {
+  .fade-enter, .fade-leave-to /* .teste-leave-active em versões anteriores a 2.1.8 */ {
     opacity: 0;
   }
   .menu-area {
