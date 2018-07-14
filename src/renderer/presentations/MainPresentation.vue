@@ -8,6 +8,10 @@
       <transition name="fade" :duration="200">
         <ConfigureCore v-if="showConfiguration"></ConfigureCore>
       </transition>
+
+      <transition name="fade" :duration="200">
+        <AddCameraContainer v-if="showAddCamera"></AddCameraContainer>
+      </transition>
     </div>
   </div>
 </template>
@@ -15,6 +19,7 @@
 <script>
 import Menu from '../components/Menu/Menu.vue';
 import ConfigureCore from '../components/ConfigureCore/ConfigureCore.vue';
+import AddCameraContainer from '../components/AddCamera/addCameraContainer.vue';
 
 const Store = require('electron-store')
 const store = new Store();
@@ -24,11 +29,15 @@ export default {
   name: 'MainPresentation',
   components: {
       Menu,
-      ConfigureCore
+      ConfigureCore,  
+      AddCameraContainer
   },
   computed: {
     showConfiguration: function() {
       return this.$store.getters.getStatusModal("settingsModal")
+    },
+    showAddCamera: function() {
+      return this.$store.getters.getStatusModal("addCameraModal")
     }
   }
 }

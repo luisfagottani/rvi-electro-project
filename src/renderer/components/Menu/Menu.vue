@@ -6,11 +6,11 @@
             <span>Ao Vivo</span>
           </router-link>
         </li>
-      <li class="menu__item">
-        <router-link to="add-camera">
+      <li @click="showModalAddCamera" class="menu__item">
+        <a href="#">
           <img :src="CameraIcon" alt="">
           <span>Cadastrar</br> Camera</span>
-        </router-link>
+        </a>
       </li>
       <li class="menu__item">
         <router-link to="backup">
@@ -47,6 +47,9 @@ export default {
   methods: {
     showModalConfigurate: function() {
       this.$store.dispatch('toggleModal', "settingsModal")
+    },
+    showModalAddCamera: function() {
+      this.$store.dispatch('toggleModal', "addCameraModal")
     }
   }
 }
