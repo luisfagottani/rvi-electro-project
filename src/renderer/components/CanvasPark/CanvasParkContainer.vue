@@ -28,9 +28,6 @@ export default {
       this.canvas.setHeight(405);
       this.canvas.setWidth(720);
       this.canvas.selection = false;
-      // this.clickCanvas();
-      // this.mouseMove();
-      // this.mouseSelects();
 
       if(this.spotsData.length > 0){
         this.populateSpots();
@@ -209,28 +206,6 @@ export default {
           
         });
       },
-      mouseMove: function() {
-        let canvinhas = this.canvas;
-        var self = this;
-        this.canvas.on('mouse:move', function (options) {
-          if(self.activeLine && self.activeLine.class == "line"){
-              var pointer = canvinhas.getPointer(options.e);
-              self.activeLine.set({ x2: pointer.x, y2: pointer.y });
-
-              var points = self.activeShape.get("points");
-              points[self.pointArray.length] = {
-                  x:pointer.x,
-                  y:pointer.y
-              }
-
-              self.activeShape.set({
-                  points: points
-              });
-              canvinhas.renderAll();
-          }
-          canvinhas.renderAll();
-        });
-      },
       mouseSelects: function() {
         var self = this
         this.canvas.on('selection:created', function(options){
@@ -240,83 +215,6 @@ export default {
         this.canvas.on('selection:cleared', function(options){
          self.deleteSpotStatus = false;
         });
-      },
-      addSpot: function(){
-        this.addSpotStatus = true;
-        this.polygonMode = true;
-        this.pointArray = new Array();
-        this.lineArray = new Array();
-        this.activeLine;
-        this.canvas.forEachObject(function(o) {
-          o.selectable = false;
-        });
-        this.canvas.discardActiveObject();
-      },
-      cancelAddSpot: function() {
-        this.canvas.clear();
-        this.addSpotStatus = false;
-        this.polygonMode = false;
-        this.pointArray = new Array();
-        this.lineArray = new Array();
-        this.activeLine = null;
-        this.activeShape = null;
-
-        for(var x = 0; x < this.spots.length; x++){
-                var polygon = new fabric.Polygon(this.spots[x].cords,{
-                  stroke:'blue',
-                  strokeWidth:1,
-                  fill: 'rgba(0,0,255,0.3)',
-                  opacity: 1,
-                  hasBorders: true,
-                  hasControls: false,
-                  lockMovementX: true,
-                  lockMovementY:  true,
-                  id: this.spots[x].id
-                });
-                this.canvas.add(polygon);
-            }
-            this.canvas.renderAll();
-
-      },
-      saveSpot: function(object) {
-          var spot = {
-            "id": object.id,
-            "cords" :
-            [
-              {
-                "x": object.points[0].x,
-                "y": object.points[0].y
-              },
-              {
-                "x": object.points[1].x,
-                "y": object.points[1].y
-              },
-              {
-                "x": object.points[2].x,
-                "y": object.points[2].y
-              },
-              {
-                "x": object.points[3].x,
-                "y": object.points[3].y
-              }
-            ]
-          }
-          // vagas.push(Object.assign({}, raizObject[x]));
-          this.spots.push(spot)
-      },
-      excludeSpot: function(){
-    
-          var spotToRemove = this.canvas.getActiveObject();
-          this.canvas.remove(spotToRemove);
-
-          this.spots = this.spots.filter((spot) => {
-            if(spotToRemove.id === spot.id){
-              return false
-            }else{
-              return true
-            }
-          });
-          this.$emit("spots", this.spots)
       },
       populateSpots: function(){
           this.canvas.clear();
@@ -353,6 +251,8 @@ export default {
      left: 0;
      top: 0;
      z-index: 5;
+     width: 100%;
+     height: 100%;
   }
 
   .add-spot {

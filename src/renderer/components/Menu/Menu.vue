@@ -6,11 +6,11 @@
             <span>Ao Vivo</span>
           </router-link>
         </li>
-      <li class="menu__item">
-        <router-link to="add-camera">
+      <li @click="showModalAddCamera" class="menu__item">
+        <a href="#">
           <img :src="CameraIcon" alt="">
           <span>Cadastrar</br> Camera</span>
-        </router-link>
+        </a>
       </li>
       <li class="menu__item">
         <router-link to="backup">
@@ -18,11 +18,11 @@
           <span>Backup</span>
         </router-link>
       </li>
-      <li class="menu__item menu__item--end">
-        <router-link to="settings">
+      <li @click="showModalConfigurate" class="menu__item menu__item--end">
+        <a href="#">
           <img :src="ConfiguracaoIcon" alt="">
           <span>Ajustes</span>
-        </router-link>
+        </a>
       </li>
     </ul>
 </template>
@@ -43,7 +43,15 @@ export default {
             DownloadIcon: DownloadIcon,
             ConfiguracaoIcon: ConfiguracaoIcon
         }
+    },
+  methods: {
+    showModalConfigurate: function() {
+      this.$store.dispatch('toggleModal', "settingsModal")
+    },
+    showModalAddCamera: function() {
+      this.$store.dispatch('toggleModal', "addCameraModal")
     }
+  }
 }
 </script>
 
