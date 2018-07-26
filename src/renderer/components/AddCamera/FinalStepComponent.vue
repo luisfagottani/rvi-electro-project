@@ -4,6 +4,7 @@
     <h3 class="subtitle">Preencha a imagem com as vagas disponíveis do estacionamento.</h3>
 
     <div class="park-map">
+      <CanvasPark @spots="val => (this.cameraData.spots = val)" ></CanvasPark>
       <video v-if="this.cameraData.camType == '2'" width="720"  autoplay :src="cameraData.urlCam"></video>
       <img v-else style="-webkit-user-select: none;" :src="cameraData.urlCam" width="720" height="576">
     </div>
@@ -21,12 +22,12 @@
 </template>
 
 <script>
-  // import FabricJs from '../FabricJs/FabricJs'
+  import CanvasPark from './CanvasPaint'
   export default {
     name: 'SecondStep',
-    // components: {
-    //   FabricJs
-    // },
+    components: {
+      CanvasPark
+    },
     props: ['cameraData'],
     methods: {
       backStep: function() {
@@ -91,8 +92,9 @@
   }
 
   .park-map {
-    width: auto;
+    width: 720px;
     height: auto;
+    margin: 0 auto;
     margin-top: 30px;
     position: relative;
     margin-bottom: 20px;
@@ -100,7 +102,7 @@
 
   video {
     width: 720px;
-    margin: 0 auto;
     display: block;
+
   }
 </style>

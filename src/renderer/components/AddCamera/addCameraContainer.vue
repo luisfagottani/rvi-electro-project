@@ -1,6 +1,7 @@
 <template>
   <div class="modal">
     <div class="modal__content">
+      <a @click="closeModal">FECHAR (X)</a>
       <FirstStepComponent
         @next-step="nextStep()" 
         v-if="step == 1"
@@ -12,7 +13,7 @@
         v-if="step == 2"
         @back-step="backStep()"
         :cameraData="cameraData"
-        @finish="saveOnboarding">
+        @finish="saveCamera">
       </FinalStepComponent>
     </div>
   </div>
@@ -48,7 +49,7 @@ export default {
       this.cameraData = {}
       this.step -= 1;
     },
-    saveOnboarding: function(val) {
+    saveCamera: function(val) {
       const min = 99;
       const max = 999999;
       const random = Math.floor(Math.random() * (max - min + 1)) + min;
@@ -61,7 +62,10 @@ export default {
       if(this.cameraData.typeFile.length > 0){
         this.cameraData.typeFile = "1"
       }
-      this.$store.dispatch('addCamera', this.cameraData)
+      debugger;
+      this.$store.dispatch('toggleModal', "addCameraModal")
+    },
+    closeModal: function() {
       this.$store.dispatch('toggleModal', "addCameraModal")
     }
   }
@@ -108,6 +112,14 @@ export default {
       right: 0;
       bottom: 0;
       top: 0;
+      
+      a {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        color: #ffffff;
+        font-weight: bold;
+      }
 
     }
   }

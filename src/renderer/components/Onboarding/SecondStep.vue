@@ -57,7 +57,7 @@
   }
 
   .park-map {
-    width: auto;
+    width: 720px;
     height: auto;
     margin-top: 30px;
     position: relative;
