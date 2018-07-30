@@ -296,6 +296,7 @@ export default {
     saveSpot: function(object) {
       var spot = {
         "id": object.id,
+        "status": 0,
         "cords" :
         [
           {
