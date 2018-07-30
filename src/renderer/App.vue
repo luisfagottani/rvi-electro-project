@@ -30,7 +30,7 @@
     name: 'rviapp',
     created() {      
       if(Object.keys(store.get()).length < 1){
-        this.$router.push({name: 'welcomeConfiguration'})
+        this.$router.push({name: 'ao-vivo'})
       }else{
         let camerasStorage = store.get();
         let cont = 0;

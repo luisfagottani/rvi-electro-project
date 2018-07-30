@@ -24,7 +24,7 @@ export default {
       }
     },
     mounted() {
-      window.canvas = this.canvas = new fabric.Canvas('canvas_park');
+      this.canvas = new fabric.Canvas('canvas_park');
       this.canvas.setHeight(405);
       this.canvas.setWidth(720);
       this.canvas.selection = false;

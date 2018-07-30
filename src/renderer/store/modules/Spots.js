@@ -2,7 +2,8 @@ const state = {
   parkingLot: [],
   canvas: {},
   camera_id: 0,
-  client: ''
+  client: '',
+  isLoading: true
 }
 
 const mutations = {
@@ -17,6 +18,9 @@ const mutations = {
   },
   SET_PTYHON_API(state, client){
     state.client = client;
+  },
+  SET_IS_LOADING(state){
+    state.isLoading = !state.isLoading
   }
 }
 
@@ -32,7 +36,13 @@ let getters = {
 
   getClientApi(state){
     return state.client
+  },
+
+  getIsLoading(state){
+    return state.isLoading
   }
+
+
 }
 
 const actions = {
@@ -47,6 +57,9 @@ const actions = {
   },
   setPythonApi({commit}, client){
     commit('SET_PTYHON_API', client)
+  },
+  setIsLoading({commit}){
+    commit('SET_IS_LOADING')
   }
   
 }
