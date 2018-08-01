@@ -28,7 +28,7 @@
 
   export default {
     name: 'rviapp',
-    created() {      
+    created() {   
       if(Object.keys(store.get()).length < 1){
         this.$router.push({name: 'ao-vivo'})
       }else{

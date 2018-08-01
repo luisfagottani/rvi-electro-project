@@ -1,6 +1,6 @@
 <template>
   <div class="camera-show">
-    <h1 class="camera-show__title">{{camera.nameCam}}</h1>
+    <h1 class="camera-show__title">{{getCamera.nameCam}}</h1>
     <div class="camera-show__palco">
       <div :class="['lds-ripple', {remove: !isLoading}]"><div></div><div></div> <span class="loading">Aguarde, análisando as vagas...</span>
       <span :class="['error-conection', {show: !errorConection}]">Falha na conexão com o servidor...</span></div>
@@ -24,13 +24,15 @@ export default {
   },
   data(){
     return {
-     camera: this.$store.getters.getCamera,
      canvas: this.$store.getters.getCanvas,
      client: this.$store.getters.getClientApi,
      errorConection: false
     }
   },
   computed: {
+    getCamera: function() {
+      return this.$store.getters.getCamera
+    },
     isLoading: function() {
       return this.$store.getters.getIsLoading
     },
@@ -42,7 +44,7 @@ export default {
     verifiySpots: function(){
       var vm = this;
       // set canvas dimensions
-      let vCap =  new cv.VideoCapture(this.camera.urlCam);
+      let vCap =  new cv.VideoCapture(this.getCamera.urlCam);
       const canvasVideo = document.getElementById('myCanvas');
       canvasVideo.height = 405
       canvasVideo.width = 720
@@ -51,6 +53,7 @@ export default {
       var SelectObject = function (spot) {
           vm.$store.getters.getCanvas.getObjects().forEach(function(o) {
               if(o.id === spot.id) {
+                  debugger;
                   if(spot.statusSpot === 1){
                     o.set("fill", "rgba(255, 0, 0, 0.3)");
                     o.set("stroke", "rgba(255, 0, 0, 0.3)");
@@ -62,7 +65,7 @@ export default {
               }
           })
     
-          vm.camera.spots.forEach(function(spots) {
+          vm.getCamera.spots.forEach(function(spots) {
             if(spot.id === spots.id) {
               if(spot.statusSpot === 1){
                 vm.$set(spots, 'status', 1)
@@ -80,6 +83,9 @@ export default {
       function playVideo () {
         
         let frame = vCap.read();
+        if(!frame) {
+          vCap.set(cv.CAP_PROP_POS_FRAMES, 0)
+        }
         let img = frame.resize(405, 720);
 
         const matRGBA = img.channels === 1
@@ -96,18 +102,21 @@ export default {
         ctx.putImageData(imgData, 0, 0);
 
         if(i == 80){
-           vm.camera.image = cv.imencode('.jpg', frame.resize(405, 720)).toString("base64");
-           vm.camera.image = Buffer.from(vm.camera.image)
-           vm.camera.width = 720
-           vm.camera.height = 405
-           vm.client.processImage(vm.camera, function(err, response) {
-             if(!err && vm.isLoading !== false){
+           vm.getCamera.image = cv.imencode('.jpg', frame.resize(405, 720)).toString("base64");
+           vm.getCamera.image = Buffer.from(vm.getCamera.image)
+           vm.getCamera.width = 720
+           vm.getCamera.height = 405
+           vm.client.processImage(vm.getCamera, function(err, response) {
+             if(!err){
                 vm.errorConection = false;
-                vm.$store.dispatch('setIsLoading')
+                if(vm.isLoading !== false)
+                  vm.$store.dispatch('setIsLoading')
                 response.spots.forEach(element => { 
                   SelectObject(element)
                 });
              }else{
+               if(vm.isLoading === false)
+                  vm.$store.dispatch('setIsLoading')
                  vm.errorConection = true;
              }
            });

@@ -19,8 +19,37 @@ export default {
         activeShape: false,
         addSpotStatus: false,
         deleteSpotStatus: false,
-        idSpot: 0,
-        spotsData: this.$store.getters.getCamera.spots
+        idSpot: 0
+      }
+    },
+    computed: {
+      getCamera: function(){
+        this.canvas.clear();
+        this.addSpotStatus = false;
+        this.polygonMode = false;
+        this.pointArray = new Array();
+        this.lineArray = new Array();
+        this.activeLine = null;
+        this.activeShape = null;
+        const camera = this.$store.getters.getCamera;
+
+        for(var x = 0; x < camera.spots.length; x++){
+          var polygon = new fabric.Polygon(camera.spots[x].cords,{
+            stroke:'blue',
+            strokeWidth:1,
+            fill: 'rgba(0,0,255,0.3)',
+            opacity: 1,
+            hasBorders: true,
+            hasControls: false,
+            lockMovementX: true,
+            lockMovementY:  true,
+            id: camera.spots[x].id
+          });
+          this.canvas.add(polygon);
+        }
+        this.canvas.renderAll();
+
+        return this.$store.getters.getCamera
       }
     },
     mounted() {
@@ -29,7 +58,7 @@ export default {
       this.canvas.setWidth(720);
       this.canvas.selection = false;
 
-      if(this.spotsData.length > 0){
+      if(this.getCamera.spots.length > 0){
         this.populateSpots();
       }
 
@@ -225,8 +254,8 @@ export default {
           this.activeLine = null;
           this.activeShape = null;
 
-         for(var x = 0; x < this.spotsData.length; x++){
-            var polygon = new fabric.Polygon(this.spotsData[x].cords,{
+         for(var x = 0; x < this.getCamera.spots.length; x++){
+            var polygon = new fabric.Polygon(this.getCamera.spots[x].cords,{
               stroke:'blue',
               strokeWidth:1,
               fill: 'rgba(0,0,255,0.3)',
@@ -235,7 +264,7 @@ export default {
               hasControls: false,
               lockMovementX: true,
               lockMovementY:  true,
-              id: this.spotsData[x].id
+              id: this.getCamera.spots[x].id
             });
             this.canvas.add(polygon);
           }
