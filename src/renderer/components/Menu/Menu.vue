@@ -6,24 +6,24 @@
             <span>Ao Vivo</span>
           </router-link>
         </li>
-      <li @click="showModalAddCamera" class="menu__item">
+      <!-- <li @click="showModalAddCamera" class="menu__item">
         <a href="#">
           <img :src="CameraIcon" alt="">
           <span>Cadastrar</br> Camera</span>
         </a>
-      </li>
-      <li class="menu__item">
+      </li> -->
+      <!-- <li class="menu__item">
         <router-link to="backup">
           <img :src="DownloadIcon" alt="">
           <span>Backup</span>
         </router-link>
-      </li>
-      <li @click="showModalConfigurate" class="menu__item menu__item--end">
+      </li> -->
+      <!-- <li @click="showModalConfigurate" class="menu__item menu__item--end">
         <a href="#">
           <img :src="ConfiguracaoIcon" alt="">
           <span>Ajustes</span>
         </a>
-      </li>
+      </li> -->
     </ul>
 </template>
 

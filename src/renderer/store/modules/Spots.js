@@ -29,6 +29,10 @@ let getters = {
   getCamera(state){
     return state.parkingLot.find(vaga => vaga.camId === state.camera_id)
   },
+
+  getAllCameras(state){
+    return state.parkingLot
+  },
   
   getCanvas(state){
     return state.canvas

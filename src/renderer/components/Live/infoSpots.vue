@@ -30,11 +30,14 @@ export default {
     }
   },
   computed: {
+    getCamera: function() {
+      return this.$store.getters.getCamera
+    },
     allSpots: function() {
-      return this.camera.spots.length
+      return this.getCamera.spots.length
     },
     emptySpots: function() {
-       const spots = this.camera.spots
+       const spots = this.getCamera.spots
         var total = 0;
         spots.forEach(spot => {
             if(spot.status == "0")
@@ -43,7 +46,7 @@ export default {
         return total;
     },
     occupiedSpots: function() {
-      const spots = this.camera.spots
+      const spots = this.getCamera.spots
       var total = 0;
       spots.forEach(spot => {
           if(spot.status == "1")

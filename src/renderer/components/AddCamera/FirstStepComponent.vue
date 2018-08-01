@@ -108,7 +108,7 @@
       uploadFile: function() {
         this.data.typeFile = event.currentTarget.files[0].name.split('.').pop();
 
-        if(this.data.typeFile !== "mov" && this.data.typeFile !== "avi" && this.data.typeFile !== "mpeg"  ){
+        if(this.data.typeFile !== "mov" && this.data.typeFile !== "avi" && this.data.typeFile !== "mpeg" && this.data.typeFile !== "mp4"   ){
           alert("Apenas extensões .mov e .avi")
         }else{
           this.data.urlCam = 'file://' + event.currentTarget.files[0].path;
