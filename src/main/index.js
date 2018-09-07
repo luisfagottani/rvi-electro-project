@@ -23,12 +23,11 @@ function createWindow () {
     webPreferences: {
       webSecurity: false
     },
-    height: 768,
     useContentSize: true,
-    width: 1200,
     resizable: true,
     titleBarStyle: 'hidden',
-    icon: path.join(__dirname, 'src/renderer/assets/icon-electron/64x64.png')
+    icon: path.join(__dirname, 'src/renderer/assets/icon-electron/64x64.png'),
+    fullscreen: true
   })
 
   mainWindow.setFullScreenable(false)

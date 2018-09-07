@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="menu-area">
+      <img :src="RviIcon" class="menu-area__logo" alt="">
       <Menu></Menu>
     </div>
     <div class="stage-area">
@@ -20,6 +21,7 @@
 import Menu from '../components/Menu/Menu.vue';
 import ConfigureCore from '../components/ConfigureCore/ConfigureCore.vue';
 import AddCameraContainer from '../components/AddCamera/addCameraContainer.vue';
+import RviIcon from '@/assets/icons/rvi.svg'  
 
 const Store = require('electron-store')
 const store = new Store();
@@ -27,6 +29,11 @@ const store = new Store();
 
 export default {
   name: 'MainPresentation',
+  data: function () {
+        return {
+            RviIcon: RviIcon
+        }
+  },
   components: {
       Menu,
       ConfigureCore,  
@@ -43,7 +50,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped lang="scss">
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
   }
@@ -52,19 +59,25 @@ export default {
   }
   .menu-area {
     /* Box Model */
-    width: 70px;
+    width: 280px;
     height: 100vh;
     padding-top: 30px;
     float:left;
 
     /* Visual */
-    background-color:#0f1324;
+    background-color:#1A1E30;
+
+    &__logo {
+      // Box Model
+      margin: 0px 10px 5px 25px;
+    }
   }
   .stage-area {
     /* Box Model */
-    width: calc(100% - 70px);
+    width: calc(100% - 280px);
     height: 100vh;
     float: left;
     padding: 30px;
+    background-color: #3B3D50;
   }
 </style>

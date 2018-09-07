@@ -1,9 +1,39 @@
 <template>
     <ul class="menu">
+        <li class="menu__item menu__item--title">
+          <span>Câmeras</span>
+        </li>
         <li class="menu__item">
           <router-link to="ao-vivo">
-            <img :src="MonitorIcon" alt="">
-            <span>Ao Vivo</span>
+            <img :src="GaleraIcon" alt="">
+            <span>Galeria</span>
+          </router-link>
+        </li>
+        <li class="menu__item">
+          <router-link to="test2">
+            <img :src="NewCameraIcon" alt="">
+            <span>Nova Camera</span>
+          </router-link>
+        </li>
+        <li class="menu__item">
+          <router-link to="teste">
+            <img :src="BackupIcon" alt="">
+            <span>Backup</span>
+          </router-link>
+        </li>
+        <li class="menu__item menu__item--title">
+          <span>Configurações</span>
+        </li>
+        <li class="menu__item">
+          <router-link to="teta">
+            <img :src="SuperviserSystemIcon" alt="">
+            <span>Treinar sistema</span>
+          </router-link>
+        </li>
+        <li class="menu__item">
+          <router-link to="teste">
+            <img :src="SettingsIcon" alt="">
+            <span>Personalizar</span>
           </router-link>
         </li>
       <!-- <li @click="showModalAddCamera" class="menu__item">
@@ -29,19 +59,21 @@
 
 
 <script>           
-import MonitorIcon from '@/assets/icons/monitor.svg'  
-import CameraIcon from '@/assets/icons/photo-camera.svg'   
-import DownloadIcon from '@/assets/icons/download.svg' 
-import ConfiguracaoIcon from '@/assets/icons/settings.svg'   
+import GaleraIcon from '@/assets/icons/galerias.svg'  
+import NewCameraIcon from '@/assets/icons/new-camera.svg'   
+import BackupIcon from '@/assets/icons/backup.svg' 
+import SuperviserSystemIcon from '@/assets/icons/treinar-sistema.svg' 
+import SettingsIcon from '@/assets/icons/personalizar.svg'   
 
 export default {
   name: 'Menu',
   data: function () {
         return {
-            MonitorIcon: MonitorIcon,
-            CameraIcon: CameraIcon,
-            DownloadIcon: DownloadIcon,
-            ConfiguracaoIcon: ConfiguracaoIcon
+            GaleraIcon: GaleraIcon,
+            NewCameraIcon: NewCameraIcon,
+            BackupIcon: BackupIcon,
+            SettingsIcon: SettingsIcon,
+            SuperviserSystemIcon: SuperviserSystemIcon
         }
     },
   methods: {
@@ -74,42 +106,94 @@ export default {
         border-bottom: none;
         margin-top: auto;
       }
+
+      &--title {
+        // Typography
+        text-align: center;
+
+        // Box Model
+        margin-bottom: 8px;
+        margin-top: 25px;
+
+        span {
+          // Box Model
+          width: 232px;
+          display: inline-block;
+          // Visual
+          border-bottom: 1px solid #BBBDC7;
+
+          // Typography
+          text-align: left;
+          font-size: 20px;
+          font-weight: bold;
+          color: #BBBDC7;
+          line-height: 34px;
+        }
+      }
     }
     &__item a{
+      position: relative;
 
       &.router-link-exact-active {
-        /* Visual */
-        background-color: #2c3049;
+        &:after {
+          // Visual
+          content: '';
+
+          // Position
+          position: absolute;
+          left: 0;
+          top: 0;
+
+          // Box Model
+          display: block;
+          height: 100%;
+          width: 4px;
+          background-color: #4A90E2;
+        }
       }
 
       /* Box Model */
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
-      border-bottom: 1px solid #292d42;
-      height: 90px;
+      height: 50px;
       width: 100%;
 
       img {
         /* Box Model */
-        width: 30px;
+        height: 18px;
         margin-bottom: 5px;
+        margin-right: 18px;
+        margin-left: 20px;
       }
 
       span {
         /* Typography */
-        font-size: 11px;
-        font-weight: bold;
+        font-size: 16px;
+        font-weight: normal;
         color: #fff;
-        line-height: 11px;
+        line-height: 17px;
       }
 
       &:hover {
         /* Visual */
         cursor: pointer;
-        transition: 0.3s all ease-in-out;
-        background-color: #2c3049;
+        
+        &:after {
+          // Visual
+          content: '';
+
+          // Position
+          position: absolute;
+          left: 0;
+          top: 0;
+
+          // Box Model
+          display: block;
+          height: 100%;
+          width: 4px;
+          background-color: #4A90E2;
+        }
       }
 
 
