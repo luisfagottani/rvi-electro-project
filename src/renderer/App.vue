@@ -18,7 +18,7 @@
       const PROTO_PATH = path.join(__dirname + '/src/project/protos/api.proto');
       service = grpc.load(PROTO_PATH).park;
     }else{
-      service = grpc.load('src/core/project/protos/api.proto').park;
+      service = grpc.load('src/core/sample/protos/api.proto').park;
     }
   } catch (error) {
     alert(error)

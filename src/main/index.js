@@ -1,4 +1,5 @@
 import { app, BrowserWindow } from 'electron'
+var path = require('path')
 
 /**
  * Set `__static` path to static files in production
@@ -26,7 +27,8 @@ function createWindow () {
     useContentSize: true,
     width: 1200,
     resizable: true,
-    titleBarStyle: 'hidden'
+    titleBarStyle: 'hidden',
+    icon: path.join(__dirname, 'src/renderer/assets/icon-electron/64x64.png')
   })
 
   mainWindow.setFullScreenable(false)
