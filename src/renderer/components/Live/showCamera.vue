@@ -1,14 +1,14 @@
 <template>
   <div class="camera-show">
-    <h1 class="camera-show__title">{{getCamera.nameCam}}</h1>
+    <!-- <h1 class="camera-show__title">{{getCamera.nameCam}}</h1> -->
     <div class="camera-show__palco">
-      <div :class="['lds-ripple', {remove: !isLoading}]"><div></div><div></div> <span class="loading">Aguarde, análisando as vagas...</span>
-      <span :class="['error-conection', {show: !errorConection}]">Falha na conexão com o servidor...</span></div>
+      <!-- <div :class="['lds-ripple', {remove: !isLoading}]"><div></div><div></div> <span class="loading">Aguarde, análisando as vagas...</span>
+      <span :class="['error-conection', {show: !errorConection}]">Falha na conexão com o servidor...</span></div> -->
       <CanvasPark></CanvasPark>
-      <canvas id="myCanvas" width="720px" height="420px"></canvas>
+      <canvas id="myCanvas" :width="width" :height="height"></canvas>
       <!-- <img v-else style="-webkit-user-select: none;" :src="camera.urlCam" width="720" height="576"> -->
-      
     </div>
+    <a v-on:click="GetCanvasAtResoution(1000)">TESTEEE</a>
   </div>
 </template>
 
@@ -24,9 +24,11 @@ export default {
   },
   data(){
     return {
-     canvas: this.$store.getters.getCanvas,
+    //  canvas: this.$store.getters.getCanvas,
      client: this.$store.getters.getClientApi,
-     errorConection: false
+     errorConection: false,
+     height: 405,
+     width: 720
     }
   },
   computed: {
@@ -41,14 +43,49 @@ export default {
     this.verifiySpots();
   },
   methods: {
+    GetCanvasAtResoution: function(newWidth)
+    {
+        let canvas = this.$store.getters.getCanvas;
+        if (canvas.width != newWidth) {
+            var scaleMultiplier = newWidth / canvas.width;
+            const heightVar = canvas.getHeight() * scaleMultiplier;
+            const widthVar = canvas.getWidth() * scaleMultiplier;
+            var objects = canvas.getObjects();
+            for (var i in objects) {
+                objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+                objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+                objects[i].left = objects[i].left * scaleMultiplier;
+                objects[i].top = objects[i].top * scaleMultiplier;
+                objects[i].setCoords();
+            }
+            var obj = canvas.backgroundImage;
+            if(obj){
+                obj.scaleX = obj.scaleX * scaleMultiplier;
+                obj.scaleY = obj.scaleY * scaleMultiplier;
+            }
+
+            canvas.discardActiveObject();
+            canvas.setWidth(widthVar);
+            canvas.setHeight(heightVar);
+            canvas.renderAll();
+            canvas.calcOffset();
+            const teste = document.getElementById('myCanvas');
+            teste.width = parseInt(widthVar);
+            teste.height = parseInt(heightVar);
+            this.height = parseInt(heightVar);
+            this.width = parseInt(widthVar);
+
+        }           
+    },
     verifiySpots: function(){
       var vm = this;
       // set canvas dimensions
       let vCap =  new cv.VideoCapture(this.getCamera.urlCam);
       const canvasVideo = document.getElementById('myCanvas');
-      canvasVideo.height = 405
-      canvasVideo.width = 720
+      canvasVideo.height = vm.height
+      canvasVideo.width = vm.width
       const ctx = canvasVideo.getContext('2d');
+      
 
       var SelectObject = function (spot) {
           vm.$store.getters.getCanvas.getObjects().forEach(function(o) {
@@ -86,7 +123,7 @@ export default {
         if(!frame) {
           vCap.set(cv.CAP_PROP_POS_FRAMES, 0)
         }
-        let img = frame.resize(405, 720);
+        let img = frame.resize(vm.height, vm.width);
 
         const matRGBA = img.channels === 1
         ? img.cvtColor(cv.COLOR_GRAY2RGBA)
@@ -102,16 +139,16 @@ export default {
         ctx.putImageData(imgData, 0, 0);
 
         if(i == 80){
-           vm.getCamera.image = cv.imencode('.jpg', frame.resize(405, 720)).toString("base64");
+           vm.getCamera.image = cv.imencode('.jpg', frame.resize(vm.height, vm.width)).toString("base64");
            vm.getCamera.image = Buffer.from(vm.getCamera.image)
-           vm.getCamera.width = 720
-           vm.getCamera.height = 405
+           vm.getCamera.width = vm.width
+           vm.getCamera.height = vm.height
            vm.client.processImage(vm.getCamera, function(err, response) {
              if(!err){
                 vm.errorConection = false;
                 if(vm.isLoading !== false)
                   vm.$store.dispatch('setIsLoading')
-                response.spots.forEach(element => { 
+                  response.spots.forEach(element => { 
                   SelectObject(element)
                 });
              }else{
@@ -138,7 +175,7 @@ export default {
       display: inline-block;
       position: absolute;
       width: 100%;
-      height: 102%;
+      height: 109%;
       background-color: rgba($color: #000000, $alpha: 0.8);
       z-index: 10;
       display: flex;
@@ -204,17 +241,11 @@ export default {
       }
     }
     /* Box Model */
-    width:770px;
-    padding: 20px;
-
-    /* Visual */
-    background-color: #0f1324;
-    box-shadow: 0px 0px 29px -3px rgba(0,0,0,0.27);
+    width:auto;
 
     &__title {
       /* Box Model */
       margin: 0;
-      margin-bottom: 10px;
 
       /* Typography */
       font-size: 16px;
@@ -223,8 +254,7 @@ export default {
     }
 
     &__palco {
-      width: 100%;
-      height: 90%;
+      width: auto;
       position: relative;
     }
   }

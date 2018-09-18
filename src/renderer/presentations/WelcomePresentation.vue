@@ -36,7 +36,7 @@ export default {
 <style scoped>
 
   .background {
-    background-color: #4286f4;
+    background-color: #3B3D50;
     padding: 0;
     margin: 0;
   } 

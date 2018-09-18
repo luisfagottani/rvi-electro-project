@@ -1,10 +1,11 @@
 <template>
   <div>
     <div class="staging">
+      <menuCameras></menuCameras>
       <showCamera></showCamera>
-      <infoSpots cameraId=this.$store.getters.getActualCamera></infoSpots>
+      <!-- <infoSpots cameraId=this.$store.getters.getActualCamera></infoSpots> -->
     </div>
-    <!-- <menuCameras></menuCameras> -->
+    
   </div>
 </template>
 
@@ -29,6 +30,5 @@ export default {
     /* Box Model */
     display: flex;
     height: auto;
-    margin-top: 30px;
   }
 </style>

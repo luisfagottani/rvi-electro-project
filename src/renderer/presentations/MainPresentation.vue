@@ -77,7 +77,6 @@ export default {
     width: calc(100% - 280px);
     height: 100vh;
     float: left;
-    padding: 30px;
     background-color: #3B3D50;
   }
 </style>
