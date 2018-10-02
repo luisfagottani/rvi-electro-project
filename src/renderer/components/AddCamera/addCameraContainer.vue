@@ -1,7 +1,7 @@
 <template>
-  <div class="modal">
-    <div class="modal__content">
-      <a @click="closeModal">FECHAR (X)</a>
+  <div class="cadastro">
+    <div class="cadastro__progress" v-bind:style="{width: progress + '%'}"></div>
+    <div class="cadastro__content">
       <FirstStepComponent
         @next-step="nextStep()" 
         v-if="step == 1"
@@ -38,16 +38,19 @@ export default {
   data(){
     return {
       step: 1,
+      progress: 50,
       cameraData: {},
     }
   },
   methods: {
     nextStep: function (event) {
       this.step += 1;
+      this.progress += 50;
     }, 
     backStep: function(event){
       this.cameraData = {}
       this.step -= 1;
+      this.progress = 50;
     },
     saveCamera: function(val) {
       const min = 99;
@@ -73,53 +76,48 @@ export default {
 </script>
 
 <style lang="scss" scoped> 
-  .modal {
+  .cadastro {
     // Box Model
     width: 100%;
     height: 100%;
     display: block;
 
-    /* Position */
-    position:  fixed;
-    z-index: 10;
-    left: 0;
-    top: 0;
-
     // Visual
-    background-color: rgba($color: #000000, $alpha: 0.9);
+    background-color: #3B3D50;
 
-    &__content{
+    // Position
+    position: relative;
+
+    &__title {
+      // Typography
+      font-size: 36px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-align: center;
+
       // Box Model
-      width: 900px;
-      height: auto;
-      max-height: 650px;
-      margin: 0 auto;
-      margin-top: 70px;
-      padding: 30px;
-      background-color: #1d233c;
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      top: 0;
+      margin-bottom: 8px
+    }
 
-      // Visual
-      background-color: #1d233c;
-
+    &__progress {
       // Position
       position: absolute;
       left: 0;
-      right: 0;
-      bottom: 0;
       top: 0;
+      height: 6px;
+
+      // Visual
+      background-color: #4A90E2;
+      transition: 0.8s all ease-in-out ;
       
-      a {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        color: #ffffff;
-        font-weight: bold;
-      }
+    }
+
+    &__content{
+      // Box Model
+      width: 100%;
+      height: 100vh;
+      padding: 40px;
+      
 
     }
   }

@@ -10,7 +10,7 @@
           </router-link>
         </li>
         <li class="menu__item">
-          <router-link to="test2">
+          <router-link to="add-camera">
             <img :src="NewCameraIcon" alt="">
             <span>Nova Camera</span>
           </router-link>
@@ -77,12 +77,6 @@ export default {
         }
     },
   methods: {
-    showModalConfigurate: function() {
-      this.$store.dispatch('toggleModal', "settingsModal")
-    },
-    showModalAddCamera: function() {
-      this.$store.dispatch('toggleModal', "addCameraModal")
-    }
   }
 }
 </script>

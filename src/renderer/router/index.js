@@ -15,6 +15,12 @@ export default new Router({
           path: 'ao-vivo',
           name: 'ao-vivo',
           component: require('@/components/Live/liveContainer').default
+        },
+        {
+          // when /app/add-camera is matched
+          path: 'add-camera',
+          name: 'add-camera',
+          component: require('@/components/AddCamera/AddCameraContainer').default
         }
       ]
     }
