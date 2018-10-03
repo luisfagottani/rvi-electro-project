@@ -10,11 +10,6 @@
         <div class="corner"> X </div>
         <span class="title">Cancelar</span>
       </a> -->
-
-      <a @click="excludeSpot()" :class="['edit-spot', {show: deleteSpotStatus}]">
-        <div class="corner"> X </div>
-        <span class="title" >Excluir Vaga</span>
-      </a>
     </ul>
   </div>
 </template>
@@ -254,10 +249,12 @@ export default {
       var self = this;
       this.canvas.on("selection:created", function(options) {
         self.deleteSpotStatus = true;
+        self.$emit("showRemoveCta", self.deleteSpotStatus);
       });
 
       this.canvas.on("selection:cleared", function(options) {
         self.deleteSpotStatus = false;
+        self.$emit("showRemoveCta", self.deleteSpotStatus);
       });
     },
     addSpot: function() {
@@ -273,6 +270,7 @@ export default {
       });
       this.canvas.discardActiveObject();
       this.canvas.renderAll();
+      this.$emit("showAddSpot", true);
     },
     cancelAddSpot: function() {
       this.canvas.clear();
@@ -299,6 +297,7 @@ export default {
       }
 
       this.canvas.renderAll();
+      this.$emit("showAddSpot", false);
     },
     saveSpot: function(object) {
       var spot = {
@@ -325,6 +324,7 @@ export default {
       };
       // vagas.push(Object.assign({}, raizObject[x]));
       this.spots.push(spot);
+      this.$emit("showAddSpot", false);
     },
 
     excludeSpot: function() {

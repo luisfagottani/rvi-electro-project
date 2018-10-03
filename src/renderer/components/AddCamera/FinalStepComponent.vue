@@ -4,18 +4,28 @@
     <h3 class="subtitle">Preencha as informações sobre a câmera a ser cadastrada.</h3>
 
     <div class="pklot">
+      <div :class="['pklot__info', {'pklot__info--hidden': !showInfoPklot}]">
+        <div class="pklot__info-area">
+          <img class="icone" :src="HelpIcon" alt="" v-on:mouseover="showHelp = true" v-on:mouseleave="showHelp = false">
+          <div :class="['content', {'content--show': this.showHelp}]">
+            <p>Ligue 3 pontos sobre uma área da imagem para demarcar uma vaga.</p>
+            <img :src="DemarcacaoExemplo" />
+          </div>
+          <a :class="['pklot__cta pklot__cta--outline']" style="margin: 0 auto; margin-top: auto;" v-on:click="cancelAddSpot()">Cancelar</a>
+        </div>
+      </div>
       <div class="pklot__canvas">
-        <CanvasPark @spots="val => (cameraData.spots = val)" :videoDimensions="dimensions" ></CanvasPark>
+        <CanvasPark @spots="val => (cameraData.spots = val)" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasPark>
         <video id="video-cam" v-if="cameraData.camType === '2'" muted style=""  autoplay :src="cameraData.urlCam"></video>
         <img v-else style="-webkit-user-select: none;" :src="cameraData.urlCam">
       </div>
       <div class="pklot__menu">
         <div class="pklot__cta-group">
           <a class="pklot__cta pklot__cta--white" v-on:click="addSpot()" >Adicionar Vaga</a>
-          <a class="pklot__cta pklot__cta--outline" @click="removeSpot()">Remover Vaga</a>
+          <a :class="['pklot__cta pklot__cta--outline', {'pklot__cta--hidden': !deleteSpotStatus}]" v-on:click="removeSpot()">Remover Vaga</a>
         </div>
         <div class="pklot__cta-group">
-          <!-- <a class="pklot__cta pklot__cta--white" v-on:click="backStep()">Voltar</a> -->
+          <a class="pklot__cta pklot__cta--white" v-on:click="backStep()">Voltar</a>
           <a class="pklot__cta pklot__cta--blue" @click="finish()" :disabled="cameraData.spots.length > 0 ? false : true">Finalizar</a>
         </div>
       </div>
@@ -27,6 +37,8 @@
 
 <script>
 import CanvasPark from "./CanvasPaint";
+import HelpIcon from "@/assets/icons/help.svg";
+import Demarcacao from "@/assets/demarcacao.png";
 export default {
   name: "SecondStep",
   mounted() {
@@ -36,11 +48,13 @@ export default {
         "loadedmetadata",
         e => {
           const canvas = document.querySelector(".pklot__canvas");
+          const info = document.querySelector(".pklot__info-area");
           const pklot = document.querySelector(".pklot");
           this.dimensions.widthVideo = canvas.offsetWidth;
           this.dimensions.heightVideo = canvas.offsetHeight;
           canvas.style.height = this.dimensions.heightVideo + "px";
           pklot.style.height = this.dimensions.heightVideo + "px";
+          info.style.height = this.dimensions.heightVideo + "px";
         },
         false
       );
@@ -54,7 +68,12 @@ export default {
       dimensions: {
         widthVideo: 0,
         heightVideo: 0
-      }
+      },
+      deleteSpotStatus: false,
+      showInfoPklot: false,
+      HelpIcon: HelpIcon,
+      DemarcacaoExemplo: Demarcacao,
+      showHelp: false
     };
   },
   props: ["cameraData"],
@@ -70,6 +89,13 @@ export default {
     },
     addSpot: function() {
       this.$children[0].addSpot();
+    },
+    removeSpot: function() {
+      this.$children[0].excludeSpot();
+    },
+    cancelAddSpot: function() {
+      this.$children[0].cancelAddSpot();
+      this.showInfoPklot = false;
     }
   }
 };
@@ -95,6 +121,97 @@ export default {
 .pklot {
   // Box Model
   display: flex;
+
+  &__info {
+    // Position
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 0;
+
+    // Box Model
+    width: 100%;
+    height: 100%;
+
+    // Visual
+    background-color: rgba(#000000, 1);
+    visibility: visible;
+    transition: 0.3s all ease-in-out;
+
+    &-area {
+        // Box Model
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+
+        // Position
+        position: absolute;
+        top: 133px;
+        right: 0;
+
+
+      .icone {
+        // Box Model
+        width: 50px;
+        margin-left: 110px;
+
+        // Visual
+        opacity: 0.6;
+
+        &:hover {
+          cursor: pointer;
+          opacity: 1;
+        }
+      }
+
+      .content {
+        width: 270px;
+        background-color: transparent;
+        margin-top: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        transition: 0.3s all ease-in-out;
+        visibility: hidden;
+        opacity: 0;
+
+        &--show {
+          // Visual
+          transition: 0.3s all ease-in-out;
+          visibility: visible;
+          opacity: 1;
+        }
+        p {
+          // Typography
+          font-size: 16px;
+          text-align:center;
+          font-weight: bold;
+          margin-bottom: 30px;
+          margin-top: 15px;
+          color: #fff;
+          line-height: 22px;
+          padding: 0px 20px;
+        }
+
+        img {
+          // Box Model
+          width: 120px;
+        }
+
+      }
+    }
+
+    &--hidden {
+      // Box Model
+      visibility: hidden;
+      opacity: 0;
+
+      // Visual
+      transition: 0.3s all ease-in-out;
+    }
+  }
 
   &__canvas {
     // Box Model
@@ -138,11 +255,23 @@ export default {
     box-shadow: 0px 0px 3px 0px #77b3f9;
     border: 1px solid;
     transition: 0.3s all ease-in-out;
+    visibility: visible;
+    opacity: 1;
 
     // Typography
     text-align: center;
     font-weight: bold;
     font-size: 16px;
+    text-transform: uppercase;
+
+    &--hidden {
+      // Box Model
+      visibility: hidden;
+      opacity: 0;
+
+      // Visual
+      transition: 0.2s all ease-in-out;
+    }
 
     &--white {
       // Visual
