@@ -258,6 +258,7 @@ export default {
       });
     },
     addSpot: function() {
+      this.canvas.defaultCursor = 'copy';
       this.canvas.setHeight(this.videoDimensions.heightVideo);
       this.canvas.setWidth(this.videoDimensions.widthVideo);
       this.addSpotStatus = true;
@@ -324,6 +325,7 @@ export default {
       };
       // vagas.push(Object.assign({}, raizObject[x]));
       this.spots.push(spot);
+      this.canvas.defaultCursor = 'default';
       this.$emit("showAddSpot", false);
     },
 

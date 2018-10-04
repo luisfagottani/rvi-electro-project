@@ -26,7 +26,7 @@
         </div>
         <div class="pklot__cta-group">
           <a class="pklot__cta pklot__cta--white" v-on:click="backStep()">Voltar</a>
-          <a class="pklot__cta pklot__cta--blue" @click="finish()" :disabled="cameraData.spots.length > 0 ? false : true">Finalizar</a>
+          <a :class="['pklot__cta pklot__cta--blue', {'hidden': cameraData.spots.length > 0 ? false : true}]" @click="finish()">Finalizar</a>
         </div>
       </div>
       
@@ -84,8 +84,12 @@ export default {
       }
     },
     finish: function() {
-      if (this.cameraData.spots.length > 0)
+      if (this.cameraData.spots.length > 0){
+        this.cameraData.width = this.dimensions.widthVideo;
+        this.cameraData.height = this.dimensions.heightVideo;
+        debugger;
         this.$emit("finish", this.cameraData);
+      }
     },
     addSpot: function() {
       this.$children[0].addSpot();
@@ -264,6 +268,17 @@ export default {
     font-size: 16px;
     text-transform: uppercase;
 
+    &.hidden {
+      pointer-events: none;
+      background-color: #ccc;
+      border: 1px solid #ccc;
+    }
+
+    
+    .pklot__info--hidden & {
+      // Box Model
+      display: none;
+    }
     &--hidden {
       // Box Model
       visibility: hidden;

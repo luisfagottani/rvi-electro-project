@@ -65,11 +65,6 @@ export default {
       if(this.cameraData.typeFile.length > 0){
         this.cameraData.typeFile = "1"
       }
-      debugger;
-      this.$store.dispatch('toggleModal', "addCameraModal")
-    },
-    closeModal: function() {
-      this.$store.dispatch('toggleModal', "addCameraModal")
     }
   }
 }
