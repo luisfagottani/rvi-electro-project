@@ -21,34 +21,33 @@
 
 
 <script>
-const fs = require('fs')
-const Store = require('electron-store')
+const fs = require("fs");
+const Store = require("electron-store");
 const store = new Store();
 
-
-import FirstStepComponent from './FirstStepComponent'
-import FinalStepComponent from './FinalStepComponent'
+import FirstStepComponent from "./FirstStepComponent";
+import FinalStepComponent from "./FinalStepComponent";
 
 export default {
-  name: 'OnboardingContainer',
+  name: "OnboardingContainer",
   components: {
-      FirstStepComponent,
-      FinalStepComponent
+    FirstStepComponent,
+    FinalStepComponent
   },
-  data(){
+  data() {
     return {
       step: 1,
       progress: 50,
-      cameraData: {},
-    }
+      cameraData: {}
+    };
   },
   methods: {
-    nextStep: function (event) {
+    nextStep: function(event) {
       this.step += 1;
       this.progress += 50;
-    }, 
-    backStep: function(event){
-      this.cameraData = {}
+    },
+    backStep: function(event) {
+      this.cameraData = {};
       this.step -= 1;
       this.progress = 50;
     },
@@ -59,62 +58,62 @@ export default {
       const self = this;
 
       this.cameraData = val;
-      this.cameraData.camId = String(new Date().getTime() + random)
-      this.cameraData.path = store.path
-      store.set(this.cameraData.camId, this.cameraData)
-      if(this.cameraData.typeFile.length > 0){
-        this.cameraData.typeFile = "1"
+      this.cameraData.camId = String(new Date().getTime() + random);
+      this.cameraData.path = store.path;
+      store.set(this.cameraData.camId, this.cameraData);
+      if (this.cameraData.typeFile.length > 0) {
+        this.cameraData.typeFile = "1";
       }
+       this.$store.dispatch('addCamera', this.cameraData)
+      this.$router.push("ao-vivo");
+      this.$store.dispatch("showSuccess");
     }
   }
-}
+};
 </script>
 
-<style lang="scss" scoped> 
-  .cadastro {
+<style lang="scss" scoped>
+.cadastro {
+  // Box Model
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  // Visual
+  background-color: #3b3d50;
+
+  // Position
+  position: relative;
+
+  &__title {
+    // Typography
+    font-size: 36px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+
     // Box Model
-    width: 100%;
-    height: 100%;
-    display: block;
+    margin-bottom: 8px;
+  }
+
+  &__progress {
+    // Position
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 6px;
 
     // Visual
-    background-color: #3B3D50;
-
-    // Position
-    position: relative;
-
-    &__title {
-      // Typography
-      font-size: 36px;
-      font-weight: 600;
-      color: #FFFFFF;
-      text-align: center;
-
-      // Box Model
-      margin-bottom: 8px
-    }
-
-    &__progress {
-      // Position
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 6px;
-
-      // Visual
-      background-color: #4A90E2;
-      transition: 0.8s all ease-in-out ;
-      
-    }
-
-    &__content{
-      // Box Model
-      width: 100%;
-      height: 100vh;
-      padding: 40px;
-      
-
-    }
+    background-color: #4a90e2;
+    transition: 0.8s all ease-in-out;
   }
+
+  &__content {
+    // Box Model
+    width: 100%;
+    height: 100vh;
+    padding: 40px;
+  }
+}
 </style>
 

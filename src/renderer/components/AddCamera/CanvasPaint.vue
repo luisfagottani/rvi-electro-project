@@ -1,16 +1,6 @@
 <template>
   <div class="canvas" v-bind:style="{ width: this.videoDimensions.widthVideo + 'px', height: this.videoDimensions.heightVideo + 'px'}">
     <canvas id="canvas_paint"></canvas>
-    <ul class="panel_edit">
-      <!-- <a @click="addSpot()" :class="['add-spot', {remove: addSpotStatus}, {remove: deleteSpotStatus }]">
-        <div class="corner">+</div>
-        <span class="title">Adicionar Vaga</span>
-      </a>
-      <a @click="cancelAddSpot()" :class="['edit-spot', {show: addSpotStatus}]">
-        <div class="corner"> X </div>
-        <span class="title">Cancelar</span>
-      </a> -->
-    </ul>
   </div>
 </template>
 
@@ -258,7 +248,7 @@ export default {
       });
     },
     addSpot: function() {
-      this.canvas.defaultCursor = 'copy';
+      this.canvas.defaultCursor = "copy";
       this.canvas.setHeight(this.videoDimensions.heightVideo);
       this.canvas.setWidth(this.videoDimensions.widthVideo);
       this.addSpotStatus = true;
@@ -325,7 +315,7 @@ export default {
       };
       // vagas.push(Object.assign({}, raizObject[x]));
       this.spots.push(spot);
-      this.canvas.defaultCursor = 'default';
+      this.canvas.defaultCursor = "default";
       this.$emit("showAddSpot", false);
     },
 

@@ -15,15 +15,15 @@
         <div class="control">
           <div class="select">
             <select  v-model="data.camType" class="input input--select">
-              <option disabled selected>Selecione o tipo</option>
-              <option value="1">Camera IP</option>
-              <option value="2">Video Externo</option>
+              <option value = "" disabled selected>Selecione o tipo da câmera</option>
+              <option value = "1">Camera IP</option>
+              <option value = "2">Video Externo</option>
             </select>
           </div>
         </div>
       </div> 
 
-      <div class="field" v-if="data.camType == 2">
+      <div class="field" v-if="data.camType === '2'">
         <input class="file-input" @change="uploadFile()" type="file" name="resume">
         <div class="file-mask">
             <div class="file-mask__cta" @click="selectFile()">
@@ -38,19 +38,31 @@
         </div>
       </div>
 
-      <div class="field" v-if="data.camType == 1 ">
-        <div class="control">
-          <input 
-            class="input" 
-            type="text" 
-            v-model="data.urlCam"
-            v-bind="showBtn"
-            placeholder="Endereço da Camera IP">
+      <div v-if="data.camType === '1' ">
+        <div class="field">
+          <div class="control">
+            <input 
+              class="input" 
+              type="text" 
+              v-model="data.urlCam"
+              v-bind="showBtn"
+              placeholder="Endereço da Camera IP">
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <div class="select">
+              <select  v-model="data.typeIp" class="input input--select">
+                <option value="motion">Motion JPEG</option>
+                <option value="rstp">H.264 (RTSP)</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="field">
-        <a class="cta button" :disabled="disabledBtn == true" v-on:click="nextStep()">Próximo</a>
+        <a :class="['cta button', {'cta--disabled': disabledBtn}]" v-on:click="nextStep()">Próximo</a>
       </div>
     </div>
     
@@ -66,9 +78,10 @@ export default {
     return {
       data: {
         nameCam: "",
-        camType: 1,
+        camType: "",
         urlCam: "",
         typeFile: "",
+        typeIp: "motion",
         spots: []
       },
       UploadSvg: UploadSvg,

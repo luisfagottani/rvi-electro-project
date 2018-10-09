@@ -17,7 +17,8 @@
       <div class="pklot__canvas">
         <CanvasPark @spots="val => (cameraData.spots = val)" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasPark>
         <video id="video-cam" v-if="cameraData.camType === '2'" muted style=""  autoplay :src="cameraData.urlCam"></video>
-        <img v-else style="-webkit-user-select: none;" :src="cameraData.urlCam">
+        <img class="video-img" width="100%" v-if="cameraData.camType === '1' && cameraData.typeIp === 'motion'" style="-webkit-user-select: none;" :src="cameraData.urlCam">
+        <canvas id="canvasVideo"  v-if="cameraData.camType === '1' && cameraData.typeIp === 'rstp'"></canvas>
       </div>
       <div class="pklot__menu">
         <div class="pklot__cta-group">
@@ -26,7 +27,7 @@
         </div>
         <div class="pklot__cta-group">
           <a class="pklot__cta pklot__cta--white" v-on:click="backStep()">Voltar</a>
-          <a :class="['pklot__cta pklot__cta--blue', {'hidden': cameraData.spots.length > 0 ? false : true}]" @click="finish()">Finalizar</a>
+          <a :class="['pklot__cta pklot__cta--blue', {'hidden': cameraData.spots.length > 0 ? false : true}]" @click="finish()">Cadastrar</a>
         </div>
       </div>
       
@@ -39,9 +40,17 @@
 import CanvasPark from "./CanvasPaint";
 import HelpIcon from "@/assets/icons/help.svg";
 import Demarcacao from "@/assets/demarcacao.png";
+import { setTimeout } from "timers";
+const cv = require("opencv4nodejs");
 export default {
   name: "SecondStep",
+  beforeDestroy() {
+    clearInterval(this.clearInterval);
+  },
   mounted() {
+    const canvas = document.querySelector(".pklot__canvas");
+    const info = document.querySelector(".pklot__info-area");
+    const pklot = document.querySelector(".pklot");
     if (this.cameraData.camType === "2") {
       var v = document.getElementById("video-cam");
       v.addEventListener(
@@ -58,6 +67,24 @@ export default {
         },
         false
       );
+    } else if (this.cameraData.typeIp === "motion") {
+      const cameraImg = document.querySelector(".video-img");
+      cameraImg.addEventListener("load", e => {
+        console.log("Carregad");
+        const canvas = document.querySelector(".pklot__canvas");
+        const info = document.querySelector(".pklot__info-area");
+        const pklot = document.querySelector(".pklot");
+        this.dimensions.widthVideo = canvas.offsetWidth;
+        this.dimensions.heightVideo = canvas.offsetHeight;
+        canvas.style.height = this.dimensions.heightVideo + "px";
+        pklot.style.height = this.dimensions.heightVideo + "px";
+        info.style.height = this.dimensions.heightVideo + "px";
+      });
+    } else {
+      this.vCap = new cv.VideoCapture(this.cameraData.urlCam);
+      this.canvasVideo = document.getElementById("canvasVideo");
+      this.ctx = this.canvasVideo.getContext("2d");
+      this.startInterval();
     }
   },
   components: {
@@ -69,6 +96,8 @@ export default {
         widthVideo: 0,
         heightVideo: 0
       },
+      vCap: null,
+      ctx: null,
       deleteSpotStatus: false,
       showInfoPklot: false,
       HelpIcon: HelpIcon,
@@ -83,16 +112,67 @@ export default {
         this.$emit("back-step");
       }
     },
+    startInterval: function() {
+      this.clearInterval = setInterval(() => {
+        this.playVideo();
+      }, 10);
+    },
     finish: function() {
-      if (this.cameraData.spots.length > 0){
+      if (this.cameraData.spots.length > 0) {
         this.cameraData.width = this.dimensions.widthVideo;
         this.cameraData.height = this.dimensions.heightVideo;
-        debugger;
         this.$emit("finish", this.cameraData);
+      }
+    },
+    playVideo: function() {
+      let frame = this.vCap.read();
+      let img = null;
+      if (!frame.empty) {
+        let width = frame.cols;
+        let height = frame.rows;
+        let newWidth = document.querySelector(".pklot__canvas").offsetWidth;
+
+        if (width !== newWidth) {
+          let scaleMultiplier = newWidth / width;
+          let heightVar = height * scaleMultiplier;
+          let widthVar = width * scaleMultiplier;
+          img = frame.resize(parseInt(heightVar), parseInt(widthVar));
+        } else {
+          img = frame;
+        }
+        this.dimensions.widthVideo = img.cols;
+        this.dimensions.heightVideo = img.rows;
+        this.canvasVideo.width = this.dimensions.widthVideo;
+        this.canvasVideo.height = this.dimensions.heightVideo;
+        // this.canvasVideo.style.height = this.dimensions.heightVideo + "px";
+        // this.canvasVideo.style.width = this.dimensions.widthVideo + "px";
+
+        const matRGBA =
+          img.channels === 1
+            ? img.cvtColor(cv.COLOR_GRAY2RGBA)
+            : img.cvtColor(cv.COLOR_BGR2RGBA);
+
+        // create new ImageData from raw mat data
+        const imgData = new ImageData(
+          new Uint8ClampedArray(matRGBA.getData()),
+          img.cols,
+          img.rows
+        );
+        this.ctx.putImageData(imgData, 0, 0);
+      } else {
+        console.log("teta");
       }
     },
     addSpot: function() {
       this.$children[0].addSpot();
+      if (this.cameraData.typeIp === "motion") {
+        const canvas = document.querySelector(".pklot__canvas");
+        const info = document.querySelector(".pklot__info-area");
+        const pklot = document.querySelector(".pklot");
+        canvas.style.height = this.dimensions.heightVideo + "px";
+        pklot.style.height = this.dimensions.heightVideo + "px";
+        info.style.height = this.dimensions.heightVideo + "px";
+      }
     },
     removeSpot: function() {
       this.$children[0].excludeSpot();
@@ -143,16 +223,15 @@ export default {
     transition: 0.3s all ease-in-out;
 
     &-area {
-        // Box Model
-        width: 300px;
-        display: flex;
-        flex-direction: column;
+      // Box Model
+      width: 300px;
+      display: flex;
+      flex-direction: column;
 
-        // Position
-        position: absolute;
-        top: 133px;
-        right: 0;
-
+      // Position
+      position: absolute;
+      top: 133px;
+      right: 0;
 
       .icone {
         // Box Model
@@ -190,7 +269,7 @@ export default {
         p {
           // Typography
           font-size: 16px;
-          text-align:center;
+          text-align: center;
           font-weight: bold;
           margin-bottom: 30px;
           margin-top: 15px;
@@ -203,7 +282,6 @@ export default {
           // Box Model
           width: 120px;
         }
-
       }
     }
 
@@ -274,7 +352,6 @@ export default {
       border: 1px solid #ccc;
     }
 
-    
     .pklot__info--hidden & {
       // Box Model
       display: none;

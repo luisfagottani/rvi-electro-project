@@ -2,7 +2,7 @@
   <div>
     <div class="staging">
       <menuCameras></menuCameras>
-      <!-- <showCamera></showCamera> -->
+      <showCamera></showCamera>
       <!-- <infoSpots cameraId=this.$store.getters.getActualCamera></infoSpots> -->
     </div>
     
