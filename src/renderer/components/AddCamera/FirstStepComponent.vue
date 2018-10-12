@@ -106,6 +106,9 @@ export default {
   methods: {
     nextStep: function() {
       if (!this.disabledBtn) {
+        if (this.data.camType === "2") {
+          this.data.typeIp = "none";
+        }
         this.$emit("next-step");
         this.$emit("camera-data", this.data);
       } else {

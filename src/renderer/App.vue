@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <LoadingState></LoadingState>
     <router-view></router-view>
   </div>
 </template>
@@ -11,6 +12,7 @@ const store = new Store();
 const fs = require("fs");
 const grpc = require("grpc");
 const path = require("path");
+require("fabric");
 
 try {
   var service;
@@ -28,10 +30,12 @@ let client = new service.Parking(
   "localhost:50060",
   grpc.credentials.createInsecure()
 );
-
+import LoadingState from "@/components/shared/LoadingState.vue";
+import { setTimeout } from "timers";
 export default {
   name: "rviapp",
   created() {
+    // this.$store.dispatch("setLoading", true);
     if (Object.keys(store.get()).length < 1) {
       this.$router.push({ name: "ao-vivo" });
     } else {
@@ -53,6 +57,9 @@ export default {
     }
 
     this.$store.dispatch("setPythonApi", client);
+  },
+  components: {
+    LoadingState
   }
 };
 </script>

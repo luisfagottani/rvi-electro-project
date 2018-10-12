@@ -5,8 +5,6 @@
 </template> 
 
 <script>
-require("fabric");
-
 export default {
   name: "CanvasParkContainer",
   data() {
@@ -22,34 +20,11 @@ export default {
       idSpot: 0
     };
   },
-  computed: {
+  props: ["getCamera"],
+  watch: {
+    // whenever question changes, this function will run
     getCamera: function() {
-      this.canvas.clear();
-      this.addSpotStatus = false;
-      this.polygonMode = false;
-      this.pointArray = new Array();
-      this.lineArray = new Array();
-      this.activeLine = null;
-      this.activeShape = null;
-      const camera = this.$store.getters.getCamera;
-
-      for (var x = 0; x < camera.spots.length; x++) {
-        var polygon = new fabric.Polygon(camera.spots[x].cords, {
-          stroke: "blue",
-          strokeWidth: 1,
-          fill: "rgba(0,0,255,0.3)",
-          opacity: 1,
-          hasBorders: true,
-          hasControls: false,
-          lockMovementX: true,
-          lockMovementY: true,
-          id: camera.spots[x].id
-        });
-        this.canvas.add(polygon);
-      }
-      this.canvas.renderAll();
-
-      return this.$store.getters.getCamera;
+      this.newCameraSelected();
     }
   },
   mounted() {
@@ -70,6 +45,14 @@ export default {
     this.$store.dispatch("setCanvas", this.canvas);
   },
   methods: {
+    newCameraSelected: function() {
+      this.canvas.clear();
+      this.canvas.setHeight(this.getCamera.height);
+      this.canvas.setWidth(this.getCamera.width);
+      if (this.getCamera.spots.length > 0) {
+        this.populateSpots();
+      }
+    },
     addPoint: function(options) {
       /**
        * Declarador de variaveis e inclusão de um id temporário, que será usado

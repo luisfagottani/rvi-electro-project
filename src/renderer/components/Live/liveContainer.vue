@@ -2,7 +2,7 @@
   <div>
     <div class="staging">
       <menuCameras></menuCameras>
-      <showCamera></showCamera>
+      <showCamera :getCamera="this.cameraData"></showCamera>
       <!-- <infoSpots cameraId=this.$store.getters.getActualCamera></infoSpots> -->
     </div>
     
@@ -21,6 +21,11 @@ export default {
     infoSpots,
     showCamera,
     menuCameras
+  },
+  computed: {
+    cameraData: function() {
+      return this.$store.getters.getCamera;
+    }
   }
 };
 </script>

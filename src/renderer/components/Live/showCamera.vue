@@ -1,9 +1,9 @@
 <template>
   <div class="camera-show">
     <div class="camera-show__palco">
-      <CanvasPark></CanvasPark>
-      <img class="video-img" width="100%" v-if="getCamera.camType === '1' && getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="getCamera.urlCam">
-      <canvas id="canvasVideo"  v-if="getCamera.camType === '1' || getCamera.camType === '2' && getCamera.typeIp !== 'motion'"></canvas>
+      <CanvasPark :getCamera="this.getSpots"></CanvasPark>
+      <!-- <img class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam"> -->
+      <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       canvas: this.$store.getters.getCanvas,
-      client: this.$store.getters.getClientApi,
+      // client: this.$store.getters.getClientApi,
       errorConection: false,
       vCap: "",
       canvasVideo: "",
@@ -31,38 +31,46 @@ export default {
       clearInterval: ""
     };
   },
+  props: ["getCamera"],
   computed: {
-    getCamera: function() {
-      return this.$store.getters.getCamera;
-    },
-    isLoading: function() {
-      return this.$store.getters.getIsLoading;
+    getSpots: function() {
+      return this.getCamera;
     }
   },
   mounted() {
-    // this.verifiySpots();
-    const stage = document.querySelector(".camera-show");
-    this.width = stage.offsetWidth;
-    const scaleMultiplier = this.width / this.getCamera.width;
-    this.height = parseInt(this.getCamera.height * scaleMultiplier);
-
-    if (
-      (this.getCamera.camType === "1" || this.getCamera.camType === "2") &&
-      this.getCamera.typeIp !== "motion"
-    ) {
-      this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
-      this.canvasVideo = document.getElementById("canvasVideo");
-      this.canvasVideo.height = this.height;
-      this.canvasVideo.width = this.width;
-      this.ctx = this.canvasVideo.getContext("2d");
-      this.startInterval();
-      this.GetCanvasAtResoution(this.width);
-    }
+    this.$store.dispatch("setLoading", true);
+    this.init();
   },
   beforeDestroy() {
     clearInterval(this.clearInterval);
   },
+  beforeUpdate() {
+    clearInterval(this.clearInterval);
+    this.$store.dispatch("setLoading", true);
+    this.init();
+  },
   methods: {
+    init: function() {
+      // this.verifiySpots();
+      const stage = document.querySelector(".camera-show");
+      this.width = stage.offsetWidth;
+      const scaleMultiplier = this.width / this.getCamera.width;
+      this.height = parseInt(this.getCamera.height * scaleMultiplier);
+      if (
+        (this.getCamera.camType === "1" || this.getCamera.camType === "2") &&
+        this.getCamera.typeIp !== "motion"
+      ) {
+        this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
+        this.canvasVideo = document.getElementById("canvasVideo");
+        this.canvasVideo.height = this.height;
+        this.canvasVideo.width = this.width;
+        this.ctx = this.canvasVideo.getContext("2d");
+        this.startInterval();
+      }
+      this.$nextTick(function() {
+        this.GetCanvasAtResoution(this.width);
+      });
+    },
     startInterval: function() {
       this.clearInterval = setInterval(() => {
         this.playVideo();
@@ -143,8 +151,9 @@ export default {
           img.rows
         );
         this.ctx.putImageData(imgData, 0, 0);
-      } else {
-        console.log("teta");
+        if (this.$store.getters.getLoadingState) {
+          this.$store.dispatch("setLoading", false);
+        }
       }
 
       // let frame = this.vCap.read();
