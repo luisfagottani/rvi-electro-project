@@ -26,12 +26,12 @@ export default {
 .mask {
   // Position
   position: fixed;
-  z-index: 10;
+  z-index: 15;
   top: 0;
   left: 0;
 
   // Visual
-  background-color: #000;
+  background-color: rgba($color: #000000, $alpha: 1);
   opacity: 0;
   visibility: hidden;
   transition: 0.4s ease-in-out 0.4s all;

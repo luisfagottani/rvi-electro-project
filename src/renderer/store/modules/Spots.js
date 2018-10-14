@@ -26,8 +26,8 @@ const mutations = {
 
 
 let getters = {
-  getCamera(state) {
-    return state.parkingLot.find(vaga => vaga.camId === state.camera_id)
+  getCamera: (state) => (id) => {
+    return state.parkingLot.find(vaga => vaga.camId === id)
   },
   getActiveCamera(state) {
     return state.camera_id;

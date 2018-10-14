@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import CanvasPark from "./CanvasPaint";
+import CanvasPark from "@/components/shared/CanvasPaint";
 import HelpIcon from "@/assets/icons/help.svg";
 import Demarcacao from "@/assets/demarcacao.png";
 import { setTimeout } from "timers";
@@ -47,7 +47,7 @@ export default {
   beforeDestroy() {
     clearInterval(this.clearInterval);
   },
-  mounted() {
+  created() {
     const canvas = document.querySelector(".pklot__canvas");
     const info = document.querySelector(".pklot__info-area");
     const pklot = document.querySelector(".pklot");
@@ -93,8 +93,8 @@ export default {
   data: function() {
     return {
       dimensions: {
-        widthVideo: 0,
-        heightVideo: 0
+        widthVideo: this.cameraData.width,
+        heightVideo: this.cameraData.height
       },
       vCap: null,
       ctx: null,

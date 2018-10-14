@@ -1,4 +1,7 @@
-import { app, BrowserWindow } from 'electron'
+import {
+  app,
+  BrowserWindow
+} from 'electron'
 var path = require('path')
 
 /**
@@ -10,11 +13,11 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
-  : `file://${__dirname}/index.html`
+const winURL = process.env.NODE_ENV === 'development' ?
+  `http://localhost:9080` :
+  `file://${__dirname}/index.html`
 
-function createWindow () {
+function createWindow() {
   /**
    * Initial window options
    */
@@ -27,7 +30,8 @@ function createWindow () {
     resizable: true,
     titleBarStyle: 'hidden',
     icon: path.join(__dirname, 'src/renderer/assets/icon-electron/64x64.png'),
-    fullscreen: true
+    fullscreen: true,
+    backgroundColor: "#000000"
   })
 
   mainWindow.setFullScreenable(false)

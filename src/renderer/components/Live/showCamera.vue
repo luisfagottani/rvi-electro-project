@@ -2,7 +2,7 @@
   <div class="camera-show">
     <div class="camera-show__palco">
       <CanvasPark :getCamera="this.getSpots"></CanvasPark>
-      <!-- <img class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam"> -->
+      <img class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam">
       <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
   </div>
@@ -38,16 +38,10 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("setLoading", true);
     this.init();
   },
   beforeDestroy() {
     clearInterval(this.clearInterval);
-  },
-  beforeUpdate() {
-    clearInterval(this.clearInterval);
-    this.$store.dispatch("setLoading", true);
-    this.init();
   },
   methods: {
     init: function() {
