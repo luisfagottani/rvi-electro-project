@@ -2,7 +2,7 @@
   <div class="camera-show">
     <div class="camera-show__palco">
       <CanvasPark :getCamera="this.getSpots"></CanvasPark>
-      <img class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam">
+      <img id="videoImg" class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam + '?time=1'">
       <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
   </div>
@@ -28,7 +28,8 @@ export default {
       ctx: "",
       width: "",
       height: "",
-      clearInterval: ""
+      clearInterval: "",
+      motionVideo: ""
     };
   },
   props: ["getCamera"],
@@ -42,6 +43,7 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.clearInterval);
+    this.motionVideo.removeEventListener("load", this.playMotion);
   },
   methods: {
     init: function() {
@@ -60,6 +62,11 @@ export default {
         this.canvasVideo.width = this.width;
         this.ctx = this.canvasVideo.getContext("2d");
         this.startInterval();
+      } else {
+        this.$nextTick(function() {
+          this.motionVideo = document.getElementById("videoImg");
+          this.motionVideo.addEventListener("load", this.playMotion, false);
+        });
       }
       this.$nextTick(function() {
         this.GetCanvasAtResoution(this.width);
@@ -192,6 +199,13 @@ export default {
       //   });
       //   i = 0;
       // }
+    },
+    playMotion: function() {
+      if (this.$store.getters.getLoadingState) {
+        this.$store.dispatch("setLoading", false);
+      }
+      this.motionVideo.src =
+        this.motionVideo.src.replace(/\?[^\n]*$/, "?") + new Date().getTime(); // 'this' refers to the image
     }
   }
 };
