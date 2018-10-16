@@ -57,8 +57,9 @@ export default {
 .staging {
   /* Box Model */
   display: flex;
-  height: auto;
+  height: 100vh;
   flex-direction: column;
+  justify-content: space-around;
 
   // Position
   position: relative;

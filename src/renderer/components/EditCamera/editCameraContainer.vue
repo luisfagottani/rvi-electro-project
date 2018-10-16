@@ -51,21 +51,18 @@ export default {
       this.progress = 50;
     },
     saveCamera: function(val) {
-      const min = 99;
-      const max = 999999;
-      const random = Math.floor(Math.random() * (max - min + 1)) + min;
       const self = this;
-
       this.cameraData = val;
-      this.cameraData.camId = String(new Date().getTime() + random);
+      this.cameraData.camId = this.$route.params.id;
       this.cameraData.path = store.path;
+      store.delete(this.$route.params.id);
       store.set(this.cameraData.camId, this.cameraData);
       if (this.cameraData.typeFile.length > 0) {
         this.cameraData.typeFile = "1";
       }
-      this.$store.dispatch("addCamera", this.cameraData);
-      this.$router.push("ao-vivo");
+      this.$store.dispatch("updateCamera", this.cameraData);
       this.$store.dispatch("showSuccess");
+      this.$router.push({ name: "lista-cameras" });
     }
   }
 };

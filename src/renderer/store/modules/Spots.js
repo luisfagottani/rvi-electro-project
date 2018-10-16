@@ -10,6 +10,11 @@ const mutations = {
   ADD_CAMERA(state, camera) {
     state.parkingLot.push(camera);
   },
+  UPDATE_CAMERA(state, camera) {
+    let camAux = state.parkingLot.findIndex(x => x.camId === camera.camId);
+    debugger;
+    state.parkingLot[camAux] = camera;
+  },
   SET_CAMERA(state, camera_id) {
     state.camera_id = camera_id
   },
@@ -56,6 +61,11 @@ const actions = {
     commit
   }, camera) {
     commit('ADD_CAMERA', camera)
+  },
+  updateCamera({
+    commit
+  }, camera) {
+    commit('UPDATE_CAMERA', camera)
   },
   setCanvas({
     commit

@@ -45,6 +45,7 @@ export default {
         this.$router.push({ name: "lista-cameras" });
       } else {
         let camerasStorage = store.get();
+        store.clear();
         let cont = 0;
         for (let cameraId in camerasStorage) {
           // skip loop if the property is from prototype

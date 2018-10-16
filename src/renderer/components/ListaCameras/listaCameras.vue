@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ul class="camera-menu">
+    <ul class="camera-menu" v-if="menuCams.length > 0">
       <li class="camera-menu__item" v-on:click="changeCamera(camera.camId)"  :key="camera.camId" v-for="camera in menuCams">
         <router-link :to="{ name: 'camera', params: {id: camera.camId } }">
           <img :src="ExampleImage" alt="">
@@ -8,16 +8,22 @@
         </router-link>
       </li>
     </ul>
+    <div v-else class="camera-menu__item camera-menu__item--add" v-on:click="addCamera()" >
+          <img :src="PlusCamera" alt="">
+          <span>Nova Câmera</span>
+      </div>
   </div>
 </template>
 
 <script>
 import ExampleImage from "@/assets/imagem01.png";
+import PlusCamera from "@/assets/icons/new-camera.svg";
 export default {
   name: "menuCameras",
   data() {
     return {
-      ExampleImage: ExampleImage
+      ExampleImage: ExampleImage,
+      PlusCamera: PlusCamera
     };
   },
   beforeRouteLeave(to, from, next) {
@@ -44,6 +50,9 @@ export default {
     },
     sleep(time) {
       return new Promise(resolve => setTimeout(resolve, time));
+    },
+    addCamera: function() {
+      this.$router.push({ name: "add-camera" });
     }
   }
 };
@@ -106,7 +115,39 @@ export default {
     }
 
     &--add {
+      // Box Model
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+
+      // isual
       background-color: #2a2d3f;
+      img {
+        width: 54px;
+        margin: 0 auto;
+        height: auto;
+        margin-bottom: 20px;
+      }
+      span {
+        // Position
+        position: static;
+
+        // Visual
+        background-color: transparent;
+
+        // Typography
+        color: #bbbdc7;
+        text-align: center;
+        font-size: 16px;
+      }
+
+      &:hover {
+        span {
+          background-color: transparent;
+        }
+      }
     }
   }
 }

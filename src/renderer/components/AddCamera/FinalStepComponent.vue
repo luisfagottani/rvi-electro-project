@@ -47,7 +47,7 @@ export default {
   beforeDestroy() {
     clearInterval(this.clearInterval);
   },
-  created() {
+  mounted() {
     const canvas = document.querySelector(".pklot__canvas");
     const info = document.querySelector(".pklot__info-area");
     const pklot = document.querySelector(".pklot");

@@ -21,7 +21,7 @@ export default {
       addSpotStatus: false,
       deleteSpotStatus: false,
       idSpot: 0,
-      spots: this.cameraData
+      spots: []
     };
   },
   mounted() {
@@ -32,11 +32,11 @@ export default {
     this.mouseMove();
     this.mouseSelects();
     if (this.cameraData) {
+      this.spots = this.cameraData;
       this.populateSpots();
+    } else {
+      this.spots = [];
     }
-    this.canvas.forEachObject(function(o) {
-      o.selectable = false;
-    });
   },
   methods: {
     addPoint: function(options) {
@@ -316,7 +316,6 @@ export default {
       this.canvas.defaultCursor = "default";
       this.$emit("showAddSpot", false);
     },
-
     excludeSpot: function() {
       var spotToRemove = this.canvas.getActiveObject();
       this.canvas.remove(spotToRemove);
@@ -335,7 +334,7 @@ export default {
       this.canvas.clear();
       this.canvas.setHeight(this.videoDimensions.heightVideo);
       this.canvas.setWidth(this.videoDimensions.widthVideo);
-      this.addSpotStatus = true;
+      this.addSpotStatus = false;
       this.polygonMode = false;
       this.pointArray = new Array();
       this.lineArray = new Array();

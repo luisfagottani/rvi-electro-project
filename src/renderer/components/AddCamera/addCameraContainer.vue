@@ -64,9 +64,9 @@ export default {
       if (this.cameraData.typeFile.length > 0) {
         this.cameraData.typeFile = "1";
       }
-       this.$store.dispatch('addCamera', this.cameraData)
-      this.$router.push("ao-vivo");
+      this.$store.dispatch("addCamera", this.cameraData);
       this.$store.dispatch("showSuccess");
+      this.$router.push({ name: "lista-cameras" });
     }
   }
 };
