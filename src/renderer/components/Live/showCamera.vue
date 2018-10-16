@@ -5,13 +5,17 @@
       <img id="videoImg" class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam + '?time=1'">
       <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
+    <div class="camera" v-if="this.videoNotDisplay">
+      <h2 class="title">Câmera não disponível... :(</h2>
+      <p class="subtitle">Não foi possivel conectar a câmera, verifique sua internet e endereço cadastrado.</p>
+    </div>
   </div>
 </template>
 
 
 <script>
 import CanvasPark from "../CanvasPark/CanvasParkContainer";
-import { setTimeout } from "timers";
+import { setTimeout, clearTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
   name: "showCamera",
@@ -29,7 +33,8 @@ export default {
       width: "",
       height: "",
       clearInterval: "",
-      motionVideo: ""
+      motionVideo: "",
+      videoNotDisplay: false
     };
   },
   props: ["getCamera"],
@@ -43,7 +48,10 @@ export default {
   },
   beforeDestroy() {
     clearInterval(this.clearInterval);
-    this.motionVideo.removeEventListener("load", this.playMotion);
+    if (this.motionVideo !== "") {
+      this.motionVideo.removeEventListener("load", this.playMotion);
+      this.motionVideo.removeEventListener("error", this.errorPlayMotion);
+    }
   },
   methods: {
     init: function() {
@@ -56,16 +64,30 @@ export default {
         (this.getCamera.camType === "1" || this.getCamera.camType === "2") &&
         this.getCamera.typeIp !== "motion"
       ) {
-        this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
-        this.canvasVideo = document.getElementById("canvasVideo");
-        this.canvasVideo.height = this.height;
-        this.canvasVideo.width = this.width;
-        this.ctx = this.canvasVideo.getContext("2d");
-        this.startInterval();
+        try {
+          this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
+          this.canvasVideo = document.getElementById("canvasVideo");
+          this.canvasVideo.height = this.height;
+          this.canvasVideo.width = this.width;
+          this.ctx = this.canvasVideo.getContext("2d");
+          this.startInterval();
+        } catch (error) {
+          this.$store.dispatch("setLoading", false);
+          this.$store.dispatch(
+            "setMessageAlert",
+            "Não foi possivel conectar a câmera"
+          );
+          this.videoNotDisplay = true;
+        }
       } else {
         this.$nextTick(function() {
           this.motionVideo = document.getElementById("videoImg");
           this.motionVideo.addEventListener("load", this.playMotion, false);
+          this.motionVideo.addEventListener(
+            "error",
+            this.errorPlayMotion,
+            false
+          );
         });
       }
       this.$nextTick(function() {
@@ -206,12 +228,24 @@ export default {
       }
       this.motionVideo.src =
         this.motionVideo.src.replace(/\?[^\n]*$/, "?") + new Date().getTime(); // 'this' refers to the image
+    },
+    errorPlayMotion: function() {
+      this.motionVideo.style.display = "none";
+      this.$store.dispatch("setLoading", false);
+      this.$store.dispatch(
+        "setMessageAlert",
+        "Não foi possivel conectar a câmera"
+      );
+      this.videoNotDisplay = true;
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.title {
+  margin-bottom: 20px;
+}
 .camera-show {
   height: auto;
   /* Box Model */

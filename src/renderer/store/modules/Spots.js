@@ -12,8 +12,11 @@ const mutations = {
   },
   UPDATE_CAMERA(state, camera) {
     let camAux = state.parkingLot.findIndex(x => x.camId === camera.camId);
-    debugger;
     state.parkingLot[camAux] = camera;
+  },
+  REMOVE_CAMERA(state, camera) {
+    let camAux = state.parkingLot.findIndex(x => x.camId === camera.camId);
+    state.parkingLot.splice(camAux, 1);
   },
   SET_CAMERA(state, camera_id) {
     state.camera_id = camera_id
@@ -66,6 +69,11 @@ const actions = {
     commit
   }, camera) {
     commit('UPDATE_CAMERA', camera)
+  },
+  removeCamera({
+    commit
+  }, camera) {
+    commit('REMOVE_CAMERA', camera)
   },
   setCanvas({
     commit

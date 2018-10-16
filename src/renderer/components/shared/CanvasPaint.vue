@@ -21,7 +21,7 @@ export default {
       addSpotStatus: false,
       deleteSpotStatus: false,
       idSpot: 0,
-      spots: []
+      spots: this.cameraData
     };
   },
   mounted() {
@@ -31,12 +31,12 @@ export default {
     this.clickCanvas();
     this.mouseMove();
     this.mouseSelects();
-    if (this.cameraData) {
-      this.spots = this.cameraData;
-      this.populateSpots();
+    if (!this.cameraData) {
+      this.cameraData = [];
     } else {
-      this.spots = [];
+      this.populateSpots();
     }
+    this.$store.dispatch("setCanvas", this.canvas);
   },
   methods: {
     addPoint: function(options) {
@@ -185,7 +185,7 @@ export default {
       this.idSpot += 1;
       polygon.id = this.idSpot;
       this.saveSpot(polygon);
-      this.$emit("spots", this.spots);
+      this.$emit("spots", this.cameraData);
 
       this.activeLine = null;
       this.activeShape = null;
@@ -263,6 +263,8 @@ export default {
     },
     cancelAddSpot: function() {
       this.canvas.clear();
+      this.canvas.setHeight(this.videoDimensions.heightVideo);
+      this.canvas.setWidth(this.videoDimensions.widthVideo);
       this.addSpotStatus = false;
       this.polygonMode = false;
       this.pointArray = new Array();
@@ -270,8 +272,8 @@ export default {
       this.activeLine = null;
       this.activeShape = null;
 
-      for (var x = 0; x < this.spots.length; x++) {
-        var polygon = new fabric.Polygon(this.spots[x].cords, {
+      for (var x = 0; x < this.cameraData.length; x++) {
+        var polygon = new fabric.Polygon(this.cameraData[x].cords, {
           stroke: "blue",
           strokeWidth: 1,
           fill: "rgba(0,0,255,0.3)",
@@ -280,7 +282,7 @@ export default {
           hasControls: false,
           lockMovementX: true,
           lockMovementY: true,
-          id: this.spots[x].id
+          id: this.cameraData[x].id
         });
         this.canvas.add(polygon);
       }
@@ -312,7 +314,7 @@ export default {
         ]
       };
       // vagas.push(Object.assign({}, raizObject[x]));
-      this.spots.push(spot);
+      this.cameraData.push(spot);
       this.canvas.defaultCursor = "default";
       this.$emit("showAddSpot", false);
     },
@@ -320,16 +322,15 @@ export default {
       var spotToRemove = this.canvas.getActiveObject();
       this.canvas.remove(spotToRemove);
 
-      this.spots = this.spots.filter(spot => {
+      this.cameraData = this.cameraData.filter(spot => {
         if (spotToRemove.id === spot.id) {
           return false;
         } else {
           return true;
         }
       });
-      this.$emit("spots", this.spots);
+      this.$emit("spots", this.cameraData);
     },
-
     populateSpots: function() {
       this.canvas.clear();
       this.canvas.setHeight(this.videoDimensions.heightVideo);
@@ -341,8 +342,8 @@ export default {
       this.activeLine = null;
       this.activeShape = null;
 
-      for (var x = 0; x < this.spots.length; x++) {
-        var polygon = new fabric.Polygon(this.spots[x].cords, {
+      for (var x = 0; x < this.cameraData.length; x++) {
+        var polygon = new fabric.Polygon(this.cameraData[x].cords, {
           stroke: "blue",
           strokeWidth: 1,
           fill: "rgba(0,0,255,0.3)",
@@ -351,7 +352,7 @@ export default {
           hasControls: false,
           lockMovementX: true,
           lockMovementY: true,
-          id: this.spots[x].id
+          id: this.cameraData[x].id
         });
         this.canvas.add(polygon);
       }

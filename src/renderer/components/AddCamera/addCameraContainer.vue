@@ -25,8 +25,8 @@ const fs = require("fs");
 const Store = require("electron-store");
 const store = new Store();
 
-import FirstStepComponent from "./FirstStepComponent";
-import FinalStepComponent from "./FinalStepComponent";
+import FirstStepComponent from "@/components/AddCamera/FirstStepComponent";
+import FinalStepComponent from "@/components/AddCamera/FinalStepComponent";
 
 export default {
   name: "OnboardingContainer",

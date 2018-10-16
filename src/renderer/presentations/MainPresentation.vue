@@ -10,12 +10,16 @@
         <ConfirmeAction v-if="showSuccess"></ConfirmeAction>
       </transition>
     </div>
+    <transition name="fade" :duration="200">
+      <Alert v-if="showAlert"></Alert>
+    </transition>
   </div>
 </template>
 
 <script>
 import Menu from "../components/Menu/Menu.vue";
 import ConfirmeAction from "../components/shared/ConfirmeAction.vue";
+import Alert from "../components/shared/Alert.vue";
 import RviIcon from "@/assets/icons/rvi.svg";
 
 const Store = require("electron-store");
@@ -30,11 +34,15 @@ export default {
   },
   components: {
     Menu,
-    ConfirmeAction
+    ConfirmeAction,
+    Alert
   },
   computed: {
     showSuccess: function() {
       return this.$store.getters.getStatusSuccess;
+    },
+    showAlert: function() {
+      return this.$store.getters.getShowAlert;
     }
   }
 };
@@ -44,8 +52,10 @@ export default {
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
+  opacity: 1;
 }
 .fade-enter, .fade-leave-to /* .teste-leave-active em versões anteriores a 2.1.8 */ {
+  transition: opacity 0.5s;
   opacity: 0;
 }
 .menu-area {

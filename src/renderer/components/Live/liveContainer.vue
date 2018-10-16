@@ -14,7 +14,7 @@
               <img :src="EditIcon" alt="">
             </router-link>
           </li>
-          <li class="delete">
+          <li class="delete" v-on:click="removeCamera">
             <img :src="DeleteIcon" alt="">
           </li>
         </ul>
@@ -27,6 +27,9 @@
 
 
 <script>
+const Store = require("electron-store");
+const store = new Store();
+
 import infoSpots from "./infoSpots";
 import showCamera from "./showCamera";
 import EditIcon from "@/assets/icons/edit-button.svg";
@@ -48,6 +51,16 @@ export default {
   computed: {
     cameraData: function() {
       return this.$store.getters.getCamera(this.$route.params.id);
+    }
+  },
+  methods: {
+    removeCamera: function() {
+      if (window.confirm("Você deseja remover essa câmera?")) {
+        store.delete(this.$route.params.id);
+        this.$store.dispatch("removeCamera", this.cameraData);
+        this.$router.push({ name: "lista-cameras" });
+        this.$store.dispatch("showSuccess");
+      }
     }
   }
 };

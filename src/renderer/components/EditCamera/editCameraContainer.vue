@@ -8,7 +8,7 @@
         :cameraData="cameraData"
         @camera-data="val => { this.cameraData = val }">
       </FirstStepComponent>
-    
+
       <FinalStepComponent
         v-if="step == 2"
         @back-step="backStep()"
@@ -25,8 +25,8 @@ const fs = require("fs");
 const Store = require("electron-store");
 const store = new Store();
 
-import FirstStepComponent from "./FirstStepComponent";
-import FinalStepComponent from "./FinalStepComponent";
+import FirstStepComponent from "@/components/EditCamera/FirstEditStepComponent";
+import FinalStepComponent from "@/components/EditCamera/FinalEditStepComponent";
 
 export default {
   name: "OnboardingContainer",

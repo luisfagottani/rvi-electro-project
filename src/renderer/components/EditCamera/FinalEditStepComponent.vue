@@ -29,7 +29,6 @@
           <a :class="['pklot__cta pklot__cta--blue', {'hidden': cameraData.spots.length > 0 ? false : true}]" @click="finish()">Atualizar</a>
         </div>
       </div>
-      
     </div>
 
   </div>
@@ -42,7 +41,7 @@ import Demarcacao from "@/assets/demarcacao.png";
 import { setTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
-  name: "SecondStep",
+  name: "FinalStepEdit",
   beforeDestroy() {
     clearInterval(this.clearInterval);
   },
@@ -50,6 +49,7 @@ export default {
     const canvas = document.querySelector(".pklot__canvas");
     const info = document.querySelector(".pklot__info-area");
     const pklot = document.querySelector(".pklot");
+
     if (this.cameraData.camType === "2") {
       var v = document.getElementById("video-cam");
       v.addEventListener(
@@ -60,6 +60,9 @@ export default {
           const pklot = document.querySelector(".pklot");
           this.dimensions.widthVideo = canvas.offsetWidth;
           this.dimensions.heightVideo = canvas.offsetHeight;
+          this.cameraData.width = this.dimensions.widthVideo;
+          this.cameraData.height = this.dimensions.heightVideo;
+          this.GetCanvasAtResoution(this.dimensions.widthVideo);
           canvas.style.height = this.dimensions.heightVideo + "px";
           pklot.style.height = this.dimensions.heightVideo + "px";
           info.style.height = this.dimensions.heightVideo + "px";
@@ -69,12 +72,14 @@ export default {
     } else if (this.cameraData.typeIp === "motion") {
       const cameraImg = document.querySelector(".video-img");
       cameraImg.addEventListener("load", e => {
-        console.log("Carregad");
         const canvas = document.querySelector(".pklot__canvas");
         const info = document.querySelector(".pklot__info-area");
         const pklot = document.querySelector(".pklot");
         this.dimensions.widthVideo = canvas.offsetWidth;
         this.dimensions.heightVideo = canvas.offsetHeight;
+        this.cameraData.width = this.dimensions.widthVideo;
+        this.cameraData.height = this.dimensions.heightVideo;
+        this.GetCanvasAtResoution(this.dimensions.widthVideo);
         canvas.style.height = this.dimensions.heightVideo + "px";
         pklot.style.height = this.dimensions.heightVideo + "px";
         info.style.height = this.dimensions.heightVideo + "px";
@@ -134,6 +139,7 @@ export default {
           let heightVar = height * scaleMultiplier;
           let widthVar = width * scaleMultiplier;
           img = frame.resize(parseInt(heightVar), parseInt(widthVar));
+          this.GetCanvasAtResoution(this.dimensions.widthVideo);
         } else {
           img = frame;
         }
@@ -141,6 +147,8 @@ export default {
         this.dimensions.heightVideo = img.rows;
         this.canvasVideo.width = this.dimensions.widthVideo;
         this.canvasVideo.height = this.dimensions.heightVideo;
+        this.cameraData.width = this.dimensions.widthVideo;
+        this.cameraData.height = this.dimensions.heightVideo;
         const matRGBA =
           img.channels === 1
             ? img.cvtColor(cv.COLOR_GRAY2RGBA)
@@ -172,6 +180,61 @@ export default {
     cancelAddSpot: function() {
       this.$children[0].cancelAddSpot();
       this.showInfoPklot = false;
+    },
+    GetCanvasAtResoution: function(newWidth) {
+      let canvas = this.$store.getters.getCanvas;
+      if (canvas.width != newWidth) {
+        var scaleMultiplier = newWidth / canvas.width;
+        const heightVar = canvas.getHeight() * scaleMultiplier;
+        const widthVar = canvas.getWidth() * scaleMultiplier;
+        var objects = canvas.getObjects();
+        this.cameraData.spots = [];
+        for (var i in objects) {
+          objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+          objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+          objects[i].left = objects[i].left * scaleMultiplier;
+          objects[i].top = objects[i].top * scaleMultiplier;
+          objects[i].setCoords();
+          // this.resizeSpot(objects[i]);
+        }
+        var obj = canvas.backgroundImage;
+        if (obj) {
+          obj.scaleX = obj.scaleX * scaleMultiplier;
+          obj.scaleY = obj.scaleY * scaleMultiplier;
+        }
+
+        canvas.discardActiveObject();
+        canvas.setWidth(parseInt(widthVar));
+        canvas.setHeight(parseInt(heightVar));
+        canvas.renderAll();
+        canvas.calcOffset();
+      }
+    },
+    resizeSpot: function(object) {
+      var spot = {
+        id: object.id,
+        status: 0,
+        cords: [
+          {
+            x: object.points[0].x,
+            y: object.points[0].y
+          },
+          {
+            x: object.points[1].x,
+            y: object.points[1].y
+          },
+          {
+            x: object.points[2].x,
+            y: object.points[2].y
+          },
+          {
+            x: object.points[3].x,
+            y: object.points[3].y
+          }
+        ]
+      };
+      // vagas.push(Object.assign({}, raizObject[x]));
+      this.cameraData.spots.push(spot);
     }
   }
 };

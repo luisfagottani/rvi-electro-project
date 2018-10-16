@@ -2,7 +2,7 @@
   <div class="canvas">
     <canvas id="canvas_park"></canvas>
   </div>
-</template> 
+</template>
 
 <script>
 export default {
