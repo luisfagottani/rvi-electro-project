@@ -71,7 +71,7 @@
 <script>
 import UploadSvg from "@/assets/icons/upload.svg";
 export default {
-  name: "FirstStep",
+  name: "FirstEditStep",
   props: ["cameraData"],
   data: function() {
     return {

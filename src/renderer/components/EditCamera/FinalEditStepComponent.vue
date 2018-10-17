@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="pklot__canvas">
-        <CanvasPark @spots="val => (cameraData.spots = val)" :cameraData="cameraData.spots" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasPark>
+        <CanvasSpotDraw v-if="showCanvas" @spots="val => (cameraData.spots = val)" :cameraData="cameraData.spots" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasSpotDraw>
         <video id="video-cam" v-if="cameraData.camType === '2'" muted style=""  autoplay :src="cameraData.urlCam"></video>
         <img class="video-img" width="100%" v-if="cameraData.camType === '1' && cameraData.typeIp === 'motion'" style="-webkit-user-select: none;" :src="cameraData.urlCam">
         <canvas id="canvasVideo"  v-if="cameraData.camType === '1' && cameraData.typeIp === 'rstp'"></canvas>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import CanvasPark from "@/components/shared/CanvasPaint";
+import CanvasSpotDraw from "@/components/shared/CanvasSpotDraw";
 import HelpIcon from "@/assets/icons/help.svg";
 import Demarcacao from "@/assets/demarcacao.png";
 import { setTimeout } from "timers";
@@ -60,12 +60,11 @@ export default {
           const pklot = document.querySelector(".pklot");
           this.dimensions.widthVideo = canvas.offsetWidth;
           this.dimensions.heightVideo = canvas.offsetHeight;
-          this.cameraData.width = this.dimensions.widthVideo;
-          this.cameraData.height = this.dimensions.heightVideo;
-          this.GetCanvasAtResoution(this.dimensions.widthVideo);
+          this.showCanvas = true;
           canvas.style.height = this.dimensions.heightVideo + "px";
           pklot.style.height = this.dimensions.heightVideo + "px";
           info.style.height = this.dimensions.heightVideo + "px";
+          this.$store.dispatch("setLoading", false);
         },
         false
       );
@@ -77,12 +76,11 @@ export default {
         const pklot = document.querySelector(".pklot");
         this.dimensions.widthVideo = canvas.offsetWidth;
         this.dimensions.heightVideo = canvas.offsetHeight;
-        this.cameraData.width = this.dimensions.widthVideo;
-        this.cameraData.height = this.dimensions.heightVideo;
-        this.GetCanvasAtResoution(this.dimensions.widthVideo);
+        this.showCanvas = true;
         canvas.style.height = this.dimensions.heightVideo + "px";
         pklot.style.height = this.dimensions.heightVideo + "px";
         info.style.height = this.dimensions.heightVideo + "px";
+        this.$store.dispatch("setLoading", false);
       });
     } else {
       this.vCap = new cv.VideoCapture(this.cameraData.urlCam);
@@ -92,7 +90,7 @@ export default {
     }
   },
   components: {
-    CanvasPark
+    CanvasSpotDraw
   },
   data: function() {
     return {
@@ -106,7 +104,8 @@ export default {
       showInfoPklot: false,
       HelpIcon: HelpIcon,
       DemarcacaoExemplo: Demarcacao,
-      showHelp: false
+      showHelp: false,
+      showCanvas: false
     };
   },
   props: ["cameraData"],
@@ -139,7 +138,6 @@ export default {
           let heightVar = height * scaleMultiplier;
           let widthVar = width * scaleMultiplier;
           img = frame.resize(parseInt(heightVar), parseInt(widthVar));
-          this.GetCanvasAtResoution(this.dimensions.widthVideo);
         } else {
           img = frame;
         }
@@ -147,8 +145,6 @@ export default {
         this.dimensions.heightVideo = img.rows;
         this.canvasVideo.width = this.dimensions.widthVideo;
         this.canvasVideo.height = this.dimensions.heightVideo;
-        this.cameraData.width = this.dimensions.widthVideo;
-        this.cameraData.height = this.dimensions.heightVideo;
         const matRGBA =
           img.channels === 1
             ? img.cvtColor(cv.COLOR_GRAY2RGBA)
@@ -161,18 +157,14 @@ export default {
           img.rows
         );
         this.ctx.putImageData(imgData, 0, 0);
+        if (this.$store.getters.getLoadingState) {
+          this.showCanvas = true;
+          this.$store.dispatch("setLoading", false);
+        }
       }
     },
     addSpot: function() {
       this.$children[0].addSpot();
-      if (this.cameraData.typeIp === "motion") {
-        const canvas = document.querySelector(".pklot__canvas");
-        const info = document.querySelector(".pklot__info-area");
-        const pklot = document.querySelector(".pklot");
-        canvas.style.height = this.dimensions.heightVideo + "px";
-        pklot.style.height = this.dimensions.heightVideo + "px";
-        info.style.height = this.dimensions.heightVideo + "px";
-      }
     },
     removeSpot: function() {
       this.$children[0].excludeSpot();
@@ -180,61 +172,6 @@ export default {
     cancelAddSpot: function() {
       this.$children[0].cancelAddSpot();
       this.showInfoPklot = false;
-    },
-    GetCanvasAtResoution: function(newWidth) {
-      let canvas = this.$store.getters.getCanvas;
-      if (canvas.width != newWidth) {
-        var scaleMultiplier = newWidth / canvas.width;
-        const heightVar = canvas.getHeight() * scaleMultiplier;
-        const widthVar = canvas.getWidth() * scaleMultiplier;
-        var objects = canvas.getObjects();
-        this.cameraData.spots = [];
-        for (var i in objects) {
-          objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
-          objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
-          objects[i].left = objects[i].left * scaleMultiplier;
-          objects[i].top = objects[i].top * scaleMultiplier;
-          objects[i].setCoords();
-          // this.resizeSpot(objects[i]);
-        }
-        var obj = canvas.backgroundImage;
-        if (obj) {
-          obj.scaleX = obj.scaleX * scaleMultiplier;
-          obj.scaleY = obj.scaleY * scaleMultiplier;
-        }
-
-        canvas.discardActiveObject();
-        canvas.setWidth(parseInt(widthVar));
-        canvas.setHeight(parseInt(heightVar));
-        canvas.renderAll();
-        canvas.calcOffset();
-      }
-    },
-    resizeSpot: function(object) {
-      var spot = {
-        id: object.id,
-        status: 0,
-        cords: [
-          {
-            x: object.points[0].x,
-            y: object.points[0].y
-          },
-          {
-            x: object.points[1].x,
-            y: object.points[1].y
-          },
-          {
-            x: object.points[2].x,
-            y: object.points[2].y
-          },
-          {
-            x: object.points[3].x,
-            y: object.points[3].y
-          }
-        ]
-      };
-      // vagas.push(Object.assign({}, raizObject[x]));
-      this.cameraData.spots.push(spot);
     }
   }
 };

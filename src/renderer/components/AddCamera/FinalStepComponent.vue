@@ -14,8 +14,9 @@
           <a :class="['pklot__cta pklot__cta--outline']" style="margin: 0 auto; margin-top: auto;" v-on:click="cancelAddSpot()">Cancelar</a>
         </div>
       </div>
+
       <div class="pklot__canvas">
-        <CanvasPark @spots="val => (cameraData.spots = val)" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasPark>
+        <CanvasSpotDraw v-if="dimensions.heightVideo > 0" @spots="val => (cameraData.spots = val)" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasSpotDraw>
         <video id="video-cam" v-if="cameraData.camType === '2'" muted style=""  autoplay :src="cameraData.urlCam"></video>
         <img class="video-img" width="100%" v-if="cameraData.camType === '1' && cameraData.typeIp === 'motion'" style="-webkit-user-select: none;" :src="cameraData.urlCam">
         <canvas id="canvasVideo"  v-if="cameraData.camType === '1' && cameraData.typeIp === 'rstp'"></canvas>
@@ -37,20 +38,24 @@
 </template>
 
 <script>
-import CanvasPark from "@/components/shared/CanvasPaint";
+import CanvasSpotDraw from "@/components/shared/CanvasSpotDraw";
 import HelpIcon from "@/assets/icons/help.svg";
 import Demarcacao from "@/assets/demarcacao.png";
 import { setTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
-  name: "SecondStep",
+  name: "FinalStepAdd",
   beforeDestroy() {
     clearInterval(this.clearInterval);
+  },
+  components: {
+    CanvasSpotDraw
   },
   mounted() {
     const canvas = document.querySelector(".pklot__canvas");
     const info = document.querySelector(".pklot__info-area");
     const pklot = document.querySelector(".pklot");
+
     if (this.cameraData.camType === "2") {
       var v = document.getElementById("video-cam");
       v.addEventListener(
@@ -64,13 +69,13 @@ export default {
           canvas.style.height = this.dimensions.heightVideo + "px";
           pklot.style.height = this.dimensions.heightVideo + "px";
           info.style.height = this.dimensions.heightVideo + "px";
+          this.$store.dispatch("setLoading", false);
         },
         false
       );
     } else if (this.cameraData.typeIp === "motion") {
       const cameraImg = document.querySelector(".video-img");
       cameraImg.addEventListener("load", e => {
-        console.log("Carregad");
         const canvas = document.querySelector(".pklot__canvas");
         const info = document.querySelector(".pklot__info-area");
         const pklot = document.querySelector(".pklot");
@@ -79,6 +84,7 @@ export default {
         canvas.style.height = this.dimensions.heightVideo + "px";
         pklot.style.height = this.dimensions.heightVideo + "px";
         info.style.height = this.dimensions.heightVideo + "px";
+        this.$store.dispatch("setLoading", false);
       });
     } else {
       this.vCap = new cv.VideoCapture(this.cameraData.urlCam);
@@ -86,9 +92,6 @@ export default {
       this.ctx = this.canvasVideo.getContext("2d");
       this.startInterval();
     }
-  },
-  components: {
-    CanvasPark
   },
   data: function() {
     return {
@@ -144,8 +147,6 @@ export default {
         this.dimensions.heightVideo = img.rows;
         this.canvasVideo.width = this.dimensions.widthVideo;
         this.canvasVideo.height = this.dimensions.heightVideo;
-        // this.canvasVideo.style.height = this.dimensions.heightVideo + "px";
-        // this.canvasVideo.style.width = this.dimensions.widthVideo + "px";
 
         const matRGBA =
           img.channels === 1
@@ -159,23 +160,16 @@ export default {
           img.rows
         );
         this.ctx.putImageData(imgData, 0, 0);
-      } else {
-        console.log("teta");
+        if (this.$store.getters.getLoadingState) {
+          this.$store.dispatch("setLoading", false);
+        }
       }
     },
     addSpot: function() {
       this.$children[0].addSpot();
-      if (this.cameraData.typeIp === "motion") {
-        const canvas = document.querySelector(".pklot__canvas");
-        const info = document.querySelector(".pklot__info-area");
-        const pklot = document.querySelector(".pklot");
-        canvas.style.height = this.dimensions.heightVideo + "px";
-        pklot.style.height = this.dimensions.heightVideo + "px";
-        info.style.height = this.dimensions.heightVideo + "px";
-      }
     },
     removeSpot: function() {
-      this.$children[0].excludeSpot();
+      this.$children[0].removeSpot();
     },
     cancelAddSpot: function() {
       this.$children[0].cancelAddSpot();

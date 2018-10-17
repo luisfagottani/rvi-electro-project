@@ -10,7 +10,7 @@
           </router-link>
         </li>
         <li class="menu__item">
-          <router-link to="/home/add-camera">
+          <router-link :to="{ name: 'add-camera', params: {id: this.$route.params.id }, query: {canvasMode: 'add'}}">
             <img :src="NewCameraIcon" alt="">
             <span>Nova Camera</span>
           </router-link>

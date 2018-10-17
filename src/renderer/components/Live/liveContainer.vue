@@ -1,6 +1,7 @@
 <template>
   <div>
     <div class="staging">
+      <infoSpots />
       <showCamera :getCamera="this.cameraData"></showCamera>
       <div :class="['edit-area', {'edit-area--open': showMenuEdit}]" v-on:click="showMenuEdit = !showMenuEdit">
         <div class="edit-area__icon">
@@ -10,7 +11,7 @@
         </div>
         <ul class="edit-area__content">
           <li class="edit">
-            <router-link :to="{ name: 'edit-camera', params: {id: this.$route.params.id } }">
+            <router-link :to="{ name: 'edit-camera', params: {id: this.$route.params.id }, query: {canvasMode: 'edit'} }">
               <img :src="EditIcon" alt="">
             </router-link>
           </li>
@@ -19,7 +20,6 @@
           </li>
         </ul>
       </div>
-      <!-- <infoSpots cameraId=this.$store.getters.getActualCamera></infoSpots> -->
     </div>
     
   </div>

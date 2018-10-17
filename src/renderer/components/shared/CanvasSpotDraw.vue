@@ -6,9 +6,8 @@
 
 <script>
 require("fabric");
-
 export default {
-  name: "CanvasPaint",
+  name: "CanvasSpotDraw",
   props: ["cameraData", "videoDimensions"],
   data() {
     return {
@@ -20,24 +19,82 @@ export default {
       activeShape: false,
       addSpotStatus: false,
       deleteSpotStatus: false,
-      idSpot: 0,
-      spots: this.cameraData
+      spots: [],
+      canvasMode: this.$route.query.canvasMode
     };
   },
   mounted() {
-    this.canvas = new fabric.Canvas("canvas_paint");
-    this.canvas.selection = false;
-    this.clickCanvas();
-    this.mouseMove();
-    this.mouseSelects();
-    if (!this.spots) {
-      this.spots = [];
-    } else {
-      this.populateSpots();
-    }
-    this.$store.dispatch("setCanvas", this.canvas);
+    this.init();
   },
   methods: {
+    init() {
+      this.canvas = new fabric.Canvas("canvas_paint");
+      this.canvas.setHeight(this.videoDimensions.heightVideo);
+      this.canvas.setWidth(this.videoDimensions.widthVideo);
+
+      this.canvas.selection = false;
+
+      if (this.canvasMode === "edit" || this.canvasMode === "add") {
+        this.clickCanvas();
+        this.mouseMove();
+        this.mouseSelects();
+      }
+
+      if (this.cameraData) {
+        this.spots = this.cameraData;
+        this.populateSpots();
+        this.resizeCanvas();
+      } else {
+        this.spots = [];
+      }
+    },
+    clickCanvas: function() {
+      var self = this;
+      this.canvas.on("mouse:down", function(options) {
+        if (self.pointArray.length > 2) {
+          self.addPoint(options);
+          self.generatePolygon(self.pointArray);
+        } else {
+          if (self.polygonMode) {
+            self.addPoint(options);
+          }
+        }
+      });
+    },
+    mouseMove: function() {
+      const self = this;
+
+      this.canvas.on("mouse:move", function(options) {
+        if (self.activeLine && self.activeLine.class == "line") {
+          let pointer = self.canvas.getPointer(options.e);
+          self.activeLine.set({ x2: pointer.x, y2: pointer.y });
+          let points = self.activeShape.get("points");
+
+          points[self.pointArray.length] = {
+            x: pointer.x,
+            y: pointer.y
+          };
+
+          self.activeShape.set({
+            points: points
+          });
+          self.canvas.renderAll();
+        }
+        self.canvas.renderAll();
+      });
+    },
+    mouseSelects: function() {
+      var self = this;
+      this.canvas.on("selection:created", function(options) {
+        self.deleteSpotStatus = true;
+        self.$emit("showRemoveCta", self.deleteSpotStatus);
+      });
+
+      this.canvas.on("selection:cleared", function(options) {
+        self.deleteSpotStatus = false;
+        self.$emit("showRemoveCta", self.deleteSpotStatus);
+      });
+    },
     addPoint: function(options) {
       /**
        * Declarador de variaveis e inclusão de um id temporário, que será usado
@@ -181,12 +238,19 @@ export default {
       });
 
       this.canvas.add(polygon);
-      // this.idSpot += 1;
-      // polygon.id = this.idSpot;
-      // this.saveSpot(polygon);
-      // this.$emit("spots", this.spots);
+      polygon.id =
+        this.spots.length < 1
+          ? 1
+          : Math.max.apply(
+              Math,
+              this.spots.map(function(o) {
+                return o.id + 1;
+              })
+            );
+      this.saveSpot(polygon);
       this.$emit("showAddSpot", false);
 
+      this.canvas.defaultCursor = "initial";
       this.activeLine = null;
       this.activeShape = null;
       this.polygonMode = false;
@@ -197,128 +261,49 @@ export default {
         o.selectable = true;
       });
     },
-    clickCanvas: function() {
-      var self = this;
-      this.canvas.on("mouse:down", function(options) {
-        if (self.pointArray.length > 2) {
-          self.addPoint(options);
-          self.generatePolygon(self.pointArray);
-        } else {
-          if (self.polygonMode) {
-            self.addPoint(options);
-          }
-        }
-      });
-    },
-    mouseMove: function() {
-      let canvinhas = this.canvas;
-      var self = this;
-
-      this.canvas.on("mouse:move", function(options) {
-        if (self.activeLine && self.activeLine.class == "line") {
-          var pointer = canvinhas.getPointer(options.e);
-          self.activeLine.set({ x2: pointer.x, y2: pointer.y });
-          var points = self.activeShape.get("points");
-
-          points[self.pointArray.length] = {
-            x: pointer.x,
-            y: pointer.y
-          };
-
-          self.activeShape.set({
-            points: points
-          });
-          canvinhas.renderAll();
-        }
-        canvinhas.renderAll();
-      });
-    },
-    mouseSelects: function() {
-      var self = this;
-      this.canvas.on("selection:created", function(options) {
-        self.deleteSpotStatus = true;
-        self.$emit("showRemoveCta", self.deleteSpotStatus);
-      });
-
-      this.canvas.on("selection:cleared", function(options) {
-        self.deleteSpotStatus = false;
-        self.$emit("showRemoveCta", self.deleteSpotStatus);
-      });
-    },
     addSpot: function() {
       this.canvas.defaultCursor = "copy";
-      this.canvas.setHeight(this.videoDimensions.heightVideo);
-      this.canvas.setWidth(this.videoDimensions.widthVideo);
       this.addSpotStatus = true;
       this.polygonMode = true;
       this.pointArray = new Array();
       this.lineArray = new Array();
       this.activeLine;
+
       this.canvas.forEachObject(function(o) {
         o.selectable = false;
       });
+
       this.canvas.discardActiveObject();
       this.canvas.renderAll();
       this.$emit("showAddSpot", true);
     },
-    cancelAddSpot: function() {
-      const objects = this.canvas.getObjects();
-      this.addSpotStatus = false;
-      this.polygonMode = false;
-      this.pointArray = new Array();
-      this.lineArray = new Array();
-      this.activeLine = null;
-      this.activeShape = null;
-
-      // for (var x = 0; x < objects.length; x++) {
-      //   var polygon = new fabric.Polygon(objects[x].cords, {
-      //     stroke: "blue",
-      //     strokeWidth: 1,
-      //     fill: "rgba(0,0,255,0.3)",
-      //     opacity: 1,
-      //     hasBorders: true,
-      //     hasControls: false,
-      //     lockMovementX: true,
-      //     lockMovementY: true,
-      //     id: objects[x].id
-      //   });
-      //   this.canvas.add(polygon);
-      // }
-      // this.canvas.renderAll();
-      this.$emit("showAddSpot", false);
-    },
-    saveSpot: function() {
-      const objects = this.canvas.getObjects();
-      for (var i in objects) {
-        objects[i].id = this.spots.length + 1;
-        var spot = {
-          id: objects[i].id,
-          status: 0,
-          cords: [
-            {
-              x: objects[i].points[0].x,
-              y: objects[i].points[0].y
-            },
-            {
-              x: objects[i].points[1].x,
-              y: objects[i].points[1].y
-            },
-            {
-              x: objects[i].points[2].x,
-              y: objects[i].points[2].y
-            },
-            {
-              x: objects[i].points[3].x,
-              y: objects[i].points[3].y
-            }
-          ]
-        };
-        this.spots.push(spot);
-      }
-
+    saveSpot(retangularSpot) {
+      var spot = {
+        id: retangularSpot.id,
+        status: 0,
+        cords: [
+          {
+            x: retangularSpot.points[0].x,
+            y: retangularSpot.points[0].y
+          },
+          {
+            x: retangularSpot.points[1].x,
+            y: retangularSpot.points[1].y
+          },
+          {
+            x: retangularSpot.points[2].x,
+            y: retangularSpot.points[2].y
+          },
+          {
+            x: retangularSpot.points[3].x,
+            y: retangularSpot.points[3].y
+          }
+        ]
+      };
+      this.spots.push(spot);
       this.$emit("spots", this.spots);
     },
-    excludeSpot: function() {
+    removeSpot(retangularSpot) {
       var spotToRemove = this.canvas.getActiveObject();
       this.canvas.remove(spotToRemove);
 
@@ -333,8 +318,6 @@ export default {
     },
     populateSpots: function() {
       this.canvas.clear();
-      this.canvas.setHeight(this.videoDimensions.heightVideo);
-      this.canvas.setWidth(this.videoDimensions.widthVideo);
       this.addSpotStatus = false;
       this.polygonMode = false;
       this.pointArray = new Array();
@@ -358,6 +341,56 @@ export default {
       }
 
       this.canvas.renderAll();
+    },
+    resizeCanvas: function() {
+      let scaleMultiplier = this.videoDimensions.widthVideo / this.canvas.width;
+      const heightVar = this.canvas.getHeight() * scaleMultiplier;
+      const widthVar = this.canvas.getWidth() * scaleMultiplier;
+      var objects = this.canvas.getObjects();
+      for (var i in objects) {
+        objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
+        objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
+        objects[i].left = objects[i].left * scaleMultiplier;
+        objects[i].top = objects[i].top * scaleMultiplier;
+        objects[i].setCoords();
+      }
+      var obj = this.canvas.backgroundImage;
+      if (obj) {
+        obj.scaleX = obj.scaleX * scaleMultiplier;
+        obj.scaleY = obj.scaleY * scaleMultiplier;
+      }
+
+      this.canvas.discardActiveObject();
+      this.canvas.setWidth(parseInt(widthVar));
+      this.canvas.setHeight(parseInt(heightVar));
+      this.canvas.renderAll();
+      this.canvas.calcOffset();
+    },
+    cancelAddSpot: function() {
+      this.canvas.defaultCursor = "initial";
+      this.canvas.clear();
+      this.addSpotStatus = false;
+      this.polygonMode = false;
+      this.pointArray = new Array();
+      this.lineArray = new Array();
+      this.activeLine = null;
+      this.activeShape = null;
+
+      for (var x = 0; x < this.spots.length; x++) {
+        var polygon = new fabric.Polygon(this.spots[x].cords, {
+          stroke: "blue",
+          strokeWidth: 1,
+          fill: "rgba(0,0,255,0.3)",
+          opacity: 1,
+          hasBorders: true,
+          hasControls: false,
+          lockMovementX: true,
+          lockMovementY: true,
+          id: this.spots[x].id
+        });
+        this.canvas.add(polygon);
+      }
+      this.canvas.renderAll();
     }
   }
 };
@@ -370,105 +403,5 @@ export default {
   top: 0;
   z-index: 5;
   margin: 0 auto;
-}
-.panel_edit {
-  padding: 5px;
-  float: right;
-  display: block;
-  position: relative;
-  width: 80px;
-}
-.add-spot {
-  position: absolute;
-  right: 0px;
-  top: 10px;
-  z-index: 10;
-  text-align: center;
-  transition: 0.3s ease-in-out all;
-  width: 80px;
-}
-
-.add-spot.remove {
-  right: 0px;
-  top: 20px;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.add-spot .corner,
-.edit-spot .corner {
-  display: inline-block;
-  width: 45px;
-  height: 45px;
-  line-height: 35px;
-  border-radius: 50px;
-  border: 2px solid #fbf7f7;
-  background-color: #4286f4;
-  color: #ffffff;
-  -webkit-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
-  -moz-box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
-  box-shadow: 0px 0px 3px 0px rgba(0, 0, 0, 0.75);
-  transition: 0.2s ease-in-out all;
-  font-size: 38px;
-  text-align: center;
-}
-
-.add-spot .corner:hover {
-  transition: 0.2s ease-in-out all;
-  background-color: #2b60b5;
-}
-
-.add-spot .title {
-  display: block;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  font-size: 16px;
-}
-
-.edit-spot {
-  visibility: hidden;
-  opacity: 0;
-  position: absolute;
-  right: 0px;
-  top: 10px;
-  z-index: 10;
-  text-align: center;
-  transition: 0.3s ease-in-out all;
-  height: 80px;
-  width: 80px;
-}
-
-.edit-spot.show {
-  opacity: 1;
-  visibility: visible;
-  right: 0;
-  top: 10px;
-}
-
-.edit-spot .corner {
-  background-color: #b91e1e;
-  font-size: 23px;
-  line-height: 40px;
-  font-size: 23px;
-  line-height: 40px;
-}
-
-.edit-spot .corner:hover {
-  background-color: #680d0d;
-  cursor: pointer;
-}
-
-.add-spot .title,
-.edit-spot .title {
-  display: block;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0 auto;
-  font-size: 16px;
-  color: #ffffff;
-  font-weight: bold;
 }
 </style>

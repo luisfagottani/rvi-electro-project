@@ -42,7 +42,7 @@ export default {
     });
 
     // this.canvas.__eventListeners["mouse:move"] = [];
-    this.$store.dispatch("setCanvas", this.canvas);
+    // this.$store.dispatch("setCanvas", this.canvas);
   },
   methods: {
     newCameraSelected: function() {

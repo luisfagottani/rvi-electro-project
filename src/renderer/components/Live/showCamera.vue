@@ -1,7 +1,7 @@
 <template>
   <div class="camera-show">
     <div class="camera-show__palco">
-      <CanvasPark :getCamera="this.getSpots"></CanvasPark>
+      <CanvasSpotDraw v-if="showCanvas" :cameraData="this.getCamera.spots" :videoDimensions="dimensions" ></CanvasSpotDraw>
       <img id="videoImg" class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam + '?time=1'">
       <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
@@ -14,27 +14,30 @@
 
 
 <script>
-import CanvasPark from "../CanvasPark/CanvasParkContainer";
+import CanvasSpotDraw from "@/components/shared/CanvasSpotDraw";
 import { setTimeout, clearTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
   name: "showCamera",
   components: {
-    CanvasPark
+    CanvasSpotDraw
   },
   data() {
     return {
-      canvas: this.$store.getters.getCanvas,
+      canvas: "",
       // client: this.$store.getters.getClientApi,
       errorConection: false,
       vCap: "",
       canvasVideo: "",
       ctx: "",
-      width: "",
-      height: "",
+      dimensions: {
+        widthVideo: this.getCamera.width,
+        heightVideo: this.getCamera.height
+      },
       clearInterval: "",
       motionVideo: "",
-      videoNotDisplay: false
+      videoNotDisplay: false,
+      showCanvas: false
     };
   },
   props: ["getCamera"],
@@ -57,9 +60,12 @@ export default {
     init: function() {
       // this.verifiySpots();
       const stage = document.querySelector(".camera-show");
-      this.width = stage.offsetWidth;
-      const scaleMultiplier = this.width / this.getCamera.width;
-      this.height = parseInt(this.getCamera.height * scaleMultiplier);
+      this.dimensions.widthVideo = stage.offsetWidth;
+      const scaleMultiplier = this.dimensions.widthVideo / this.getCamera.width;
+      this.dimensions.heightVideo = parseInt(
+        this.getCamera.height * scaleMultiplier
+      );
+      this.showCanvas = true;
       if (
         (this.getCamera.camType === "1" || this.getCamera.camType === "2") &&
         this.getCamera.typeIp !== "motion"
@@ -67,8 +73,8 @@ export default {
         try {
           this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
           this.canvasVideo = document.getElementById("canvasVideo");
-          this.canvasVideo.height = this.height;
-          this.canvasVideo.width = this.width;
+          this.canvasVideo.height = this.dimensions.heightVideo;
+          this.canvasVideo.width = this.dimensions.widthVideo;
           this.ctx = this.canvasVideo.getContext("2d");
           this.startInterval();
         } catch (error) {
@@ -90,41 +96,11 @@ export default {
           );
         });
       }
-      this.$nextTick(function() {
-        this.GetCanvasAtResoution(this.width);
-      });
     },
     startInterval: function() {
       this.clearInterval = setInterval(() => {
         this.playVideo();
       }, 100);
-    },
-    GetCanvasAtResoution: function(newWidth) {
-      let canvas = this.$store.getters.getCanvas;
-      if (canvas.width != newWidth) {
-        var scaleMultiplier = newWidth / canvas.width;
-        const heightVar = canvas.getHeight() * scaleMultiplier;
-        const widthVar = canvas.getWidth() * scaleMultiplier;
-        var objects = canvas.getObjects();
-        for (var i in objects) {
-          objects[i].scaleX = objects[i].scaleX * scaleMultiplier;
-          objects[i].scaleY = objects[i].scaleY * scaleMultiplier;
-          objects[i].left = objects[i].left * scaleMultiplier;
-          objects[i].top = objects[i].top * scaleMultiplier;
-          objects[i].setCoords();
-        }
-        var obj = canvas.backgroundImage;
-        if (obj) {
-          obj.scaleX = obj.scaleX * scaleMultiplier;
-          obj.scaleY = obj.scaleY * scaleMultiplier;
-        }
-
-        canvas.discardActiveObject();
-        canvas.setWidth(parseInt(widthVar));
-        canvas.setHeight(parseInt(heightVar));
-        canvas.renderAll();
-        canvas.calcOffset();
-      }
     },
     verifiySpots: function() {
       var vm = this;
@@ -161,7 +137,10 @@ export default {
       let frame = this.vCap.read();
       let img = null;
       if (!frame.empty) {
-        img = frame.resize(this.height, this.width);
+        img = frame.resize(
+          this.dimensions.heightVideo,
+          this.dimensions.widthVideo
+        );
         const matRGBA =
           img.channels === 1
             ? img.cvtColor(cv.COLOR_GRAY2RGBA)

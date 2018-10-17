@@ -29,7 +29,7 @@ import FirstStepComponent from "@/components/EditCamera/FirstEditStepComponent";
 import FinalStepComponent from "@/components/EditCamera/FinalEditStepComponent";
 
 export default {
-  name: "OnboardingContainer",
+  name: "EditCameraContainer",
   components: {
     FirstStepComponent,
     FinalStepComponent
@@ -45,6 +45,7 @@ export default {
     nextStep: function(event) {
       this.step += 1;
       this.progress += 50;
+      this.$store.dispatch("setLoading", true);
     },
     backStep: function(event) {
       this.step -= 1;

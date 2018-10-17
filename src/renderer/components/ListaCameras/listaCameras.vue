@@ -2,7 +2,7 @@
   <div>
     <ul class="camera-menu" v-if="menuCams.length > 0">
       <li class="camera-menu__item" v-on:click="changeCamera(camera.camId)"  :key="camera.camId" v-for="camera in menuCams">
-        <router-link :to="{ name: 'camera', params: {id: camera.camId } }">
+        <router-link :to="{ name: 'camera', params: {id: camera.camId}, query: {canvasMode: 'show'}}">
           <img :src="ExampleImage" alt="">
           <span>{{camera.nameCam}}</span>
         </router-link>
@@ -65,7 +65,7 @@ export default {
   flex-wrap: wrap;
   width: 100%;
   margin-top: 30px;
-  justify-content: space-around;
+  justify-content: flex-start;
 
   &__item {
     height: 230px;
@@ -77,10 +77,8 @@ export default {
     overflow: hidden;
     position: relative;
     transition: 0.3s ease-in-out all;
-
-    &:last-of-type() {
-      margin-right: 0px;
-    }
+    margin-right: 15px;
+    margin-left: 15px;
 
     &:hover {
       transition: 0.3s ease-in-out all;
