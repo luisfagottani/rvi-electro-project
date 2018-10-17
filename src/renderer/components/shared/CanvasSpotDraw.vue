@@ -40,9 +40,10 @@ export default {
         this.mouseSelects();
       }
 
-      if (this.cameraData) {
-        this.spots = this.cameraData;
+      if (this.cameraData.spots) {
+        this.spots = this.cameraData.spots;
         this.populateSpots();
+        debugger;
         this.resizeCanvas();
       } else {
         this.spots = [];
@@ -343,7 +344,8 @@ export default {
       this.canvas.renderAll();
     },
     resizeCanvas: function() {
-      let scaleMultiplier = this.videoDimensions.widthVideo / this.canvas.width;
+      let scaleMultiplier =
+        this.videoDimensions.widthVideo / this.cameraData.width;
       const heightVar = this.canvas.getHeight() * scaleMultiplier;
       const widthVar = this.canvas.getWidth() * scaleMultiplier;
       var objects = this.canvas.getObjects();

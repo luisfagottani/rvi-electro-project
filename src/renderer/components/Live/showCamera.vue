@@ -1,7 +1,7 @@
 <template>
   <div class="camera-show">
     <div class="camera-show__palco">
-      <CanvasSpotDraw v-if="showCanvas" :cameraData="this.getCamera.spots" :videoDimensions="dimensions" ></CanvasSpotDraw>
+      <CanvasSpotDraw v-if="showCanvas" :cameraData="this.getCamera" :videoDimensions="dimensions" ></CanvasSpotDraw>
       <img id="videoImg" class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam + '?time=1'">
       <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
@@ -71,6 +71,7 @@ export default {
         this.getCamera.typeIp !== "motion"
       ) {
         try {
+          debugger;
           this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
           this.canvasVideo = document.getElementById("canvasVideo");
           this.canvasVideo.height = this.dimensions.heightVideo;

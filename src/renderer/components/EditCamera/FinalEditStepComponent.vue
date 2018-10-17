@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="pklot__canvas">
-        <CanvasSpotDraw v-if="showCanvas" @spots="val => (cameraData.spots = val)" :cameraData="cameraData.spots" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasSpotDraw>
+        <CanvasSpotDraw v-if="showCanvas" @spots="val => (cameraData.spots = val)" :cameraData="cameraData" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasSpotDraw>
         <video id="video-cam" v-if="cameraData.camType === '2'" muted style=""  autoplay :src="cameraData.urlCam"></video>
         <img class="video-img" width="100%" v-if="cameraData.camType === '1' && cameraData.typeIp === 'motion'" style="-webkit-user-select: none;" :src="cameraData.urlCam">
         <canvas id="canvasVideo"  v-if="cameraData.camType === '1' && cameraData.typeIp === 'rstp'"></canvas>
