@@ -58,7 +58,6 @@ export default {
   },
   methods: {
     init: function() {
-      // this.verifiySpots();
       const stage = document.querySelector(".camera-show");
       this.dimensions.widthVideo = stage.offsetWidth;
       const scaleMultiplier = this.dimensions.widthVideo / this.getCamera.width;
@@ -71,7 +70,6 @@ export default {
         this.getCamera.typeIp !== "motion"
       ) {
         try {
-          debugger;
           this.vCap = new cv.VideoCapture(this.getCamera.urlCam);
           this.canvasVideo = document.getElementById("canvasVideo");
           this.canvasVideo.height = this.dimensions.heightVideo;

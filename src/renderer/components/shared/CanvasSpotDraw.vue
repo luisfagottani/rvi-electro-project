@@ -43,7 +43,6 @@ export default {
       if (this.cameraData.spots) {
         this.spots = this.cameraData.spots;
         this.populateSpots();
-        debugger;
         this.resizeCanvas();
       } else {
         this.spots = [];
