@@ -101,36 +101,30 @@ export default {
         this.playVideo();
       }, 100);
     },
-    verifiySpots: function() {
-      var vm = this;
-      this.canvasVideo.height = vm.height;
-      this.canvasVideo.width = vm.width;
-
-      const SelectObject = function(spot) {
-        vm.$store.getters.getCanvas.getObjects().forEach(function(o) {
-          if (o.id === spot.id) {
-            if (spot.statusSpot === 1) {
-              o.set("fill", "rgba(255, 0, 0, 0.3)");
-              o.set("stroke", "rgba(255, 0, 0, 0.3)");
-            } else {
-              o.set("fill", "rgba(0,255,0, 0.4)");
-              o.set("stroke", "rgba(0,255,0, 0.4)");
-            }
+    changeStatusSpot: function(spot) {
+      this.$store.getters.getCanvas.getObjects().forEach(function(o) {
+        if (o.id === spot.id) {
+          if (spot.statusSpot === 1) {
+            o.set("fill", "rgba(255, 0, 0, 0.3)");
+            o.set("stroke", "rgba(255, 0, 0, 0.3)");
+          } else {
+            o.set("fill", "rgba(0,255,0, 0.4)");
+            o.set("stroke", "rgba(0,255,0, 0.4)");
           }
-        });
+        }
+      });
 
-        vm.getCamera.spots.forEach(function(spots) {
-          if (spot.id === spots.id) {
-            if (spot.statusSpot === 1) {
-              vm.$set(spots, "status", 1);
-            } else {
-              vm.$set(spots, "status", 0);
-            }
+      this.getCamera.spots.forEach(spots => {
+        if (spot.id === spots.id) {
+          if (spot.statusSpot === 1) {
+            this.$set(spots, "status", 1);
+          } else {
+            this.$set(spots, "status", 0);
           }
-        });
+        }
+      });
 
-        vm.$store.getters.getCanvas.renderAll();
-      };
+      this.$store.getters.getCanvas.renderAll();
     },
     playVideo: function() {
       let frame = this.vCap.read();
@@ -156,17 +150,14 @@ export default {
           this.$store.dispatch("setLoading", false);
         }
       }
-
-      if (i == 80) {
-      }
     },
     getBase64Image: function(img) {
-      var canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      var ctx = canvas.getContext("2d");
+      const canvas = document.createElement("canvas");
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0);
-      var dataURL = canvas.toDataURL("image/png");
+      const dataURL = canvas.toDataURL("image/png");
       return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     },
     processVagas: function(img) {
@@ -191,19 +182,10 @@ export default {
         .toString("base64");
       this.getCamera.image = Buffer.from(this.getCamera.image);
       this.client.processImage(this.getCamera, (err, response) => {
-        debugger;
-        // if (!err) {
-        //   this.errorConection = false;
-        //   if (this.isLoading !== false) vm.$store.dispatch("setIsLoading");
-        //   response.spots.forEach(element => {
-        //     SelectObject(element);
-        //   });
-        // } else {
-        //   if (vm.isLoading === false) vm.$store.dispatch("setIsLoading");
-        //   vm.errorConection = true;
-        // }
+        response.spots.forEach(element => {
+          this.changeStatusSpot(element);
+        });
       });
-      i = 0;
     },
     playMotion: function(e) {
       if (this.$store.getters.getLoadingState) {

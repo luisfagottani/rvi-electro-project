@@ -52,7 +52,7 @@ export default {
       return new Promise(resolve => setTimeout(resolve, time));
     },
     addCamera: function() {
-      this.$router.push({ name: "add-camera" });
+      this.$router.push({ name: "add-camera", query: { canvasMode: "add" } });
     }
   }
 };
