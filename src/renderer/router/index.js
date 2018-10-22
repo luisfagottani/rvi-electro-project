@@ -1,23 +1,44 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 Vue.use(Router)
 
-export default new Router({
-  routes: [
-    {
+const router = new Router({
+  routes: [{
       path: '/app',
       name: 'app',
-      component: require('@/presentations/mainPresentation').default,
-      children: [
+      component: require('@/App').default,
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: require('@/presentations/MainPresentation').default,
+      children: [{
+          path: 'lista-cameras',
+          name: 'lista-cameras',
+          component: require('@/components/ListaCameras/ListaCameras').default
+        },
         {
-          // when /app/ao-vivo is matched
-          path: 'ao-vivo',
-          name: 'ao-vivo',
-          component: require('@/components/Live/liveContainer').default
+          // when /home/camera/:id is matched
+          path: 'camera/:id',
+          name: 'camera',
+          component: require('@/components/Live/LiveContainer').default
+        },
+        {
+          // when /home/camera/:id is matched
+          path: 'camera/edit/:id',
+          name: 'edit-camera',
+          component: require('@/components/CameraManagement/CameraManagementContainer').default
+        },
+        {
+          // when /home/camera/add is matched
+          path: 'camera/add/',
+          name: 'add-camera',
+          component: require('@/components/CameraManagement/CameraManagementContainer').default
         }
       ]
     }
 
   ]
 })
+
+export default router

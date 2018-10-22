@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js dec
+  /usr/local/bin/node /usr/local/Cellar/yarn/1.5.1_1/libexec/bin/yarn.js dev
 
 PATH: 
   /usr/local/sbin:/usr/local/sbin:/Users/luis.agottani/anaconda2/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/Wireshark.app/Contents/MacOS:/usr/local/sbin:/Users/luis.agottani/anaconda2/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin
@@ -79,7 +79,7 @@ npm manifest:
       "grpc": "1.10.0",
       "grpc-tools": "^1.6.6",
       "node-sass": "^4.9.1",
-      "opencv4nodejs": "^4.7.1",
+      "opencv4nodejs": "^4.9.0",
       "python-shell": "^0.5.0",
       "sass-loader": "^7.0.3",
       "vue": "^2.3.3",
@@ -4783,9 +4783,9 @@ Lockfile:
       pseudomap "^1.0.2"
       yallist "^2.1.2"
   
-  macro-inferno@^0.2.1:
-    version "0.2.1"
-    resolved "https://registry.yarnpkg.com/macro-inferno/-/macro-inferno-0.2.1.tgz#20de3ae8e9ac76b3fc652cbf6c25f325a9ba2e22"
+  macro-inferno@^0.2.2:
+    version "0.2.2"
+    resolved "https://registry.yarnpkg.com/macro-inferno/-/macro-inferno-0.2.2.tgz#57dd960f9fa3e117ef9f46dbf0629d08d1d04c5f"
     dependencies:
       nan "^2.7.0"
   
@@ -5070,9 +5070,13 @@ Lockfile:
       lodash.merge "^3.3.2"
       log-update "^1.0.2"
   
-  nan@^2.0.0, nan@^2.10.0, nan@^2.7.0, nan@^2.8.0, nan@^2.9.2:
+  nan@^2.0.0, nan@^2.10.0, nan@^2.7.0, nan@^2.9.2:
     version "2.10.0"
     resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
+  
+  nan@^2.11.0:
+    version "2.11.1"
+    resolved "https://registry.yarnpkg.com/nan/-/nan-2.11.1.tgz#90e22bccb8ca57ea4cd37cc83d3819b52eea6766"
   
   nanomatch@^1.2.9:
     version "1.2.9"
@@ -5091,11 +5095,11 @@ Lockfile:
       snapdragon "^0.8.1"
       to-regex "^3.0.1"
   
-  native-node-utils@0.1.2:
-    version "0.1.2"
-    resolved "https://registry.yarnpkg.com/native-node-utils/-/native-node-utils-0.1.2.tgz#7069f6b2a066742b55d886430b8ea5b3a9ae5ac2"
+  native-node-utils@0.1.4:
+    version "0.1.4"
+    resolved "https://registry.yarnpkg.com/native-node-utils/-/native-node-utils-0.1.4.tgz#7223c70786a952868ea5d125b4810053c165dcec"
     dependencies:
-      nan "^2.8.0"
+      nan "^2.11.0"
   
   ncname@1.0.x:
     version "1.0.0"
@@ -5423,20 +5427,20 @@ Lockfile:
     version "1.1.0"
     resolved "http://registry.npmjs.org/onetime/-/onetime-1.1.0.tgz#a1f7838f8314c516f05ecefcbc4ccfe04b4ed789"
   
-  opencv-build@0.0.14:
-    version "0.0.14"
-    resolved "https://registry.yarnpkg.com/opencv-build/-/opencv-build-0.0.14.tgz#397a5dfdaaeb1cadb027cf9c6793f431d25953b9"
+  opencv-build@0.0.15:
+    version "0.0.15"
+    resolved "https://registry.yarnpkg.com/opencv-build/-/opencv-build-0.0.15.tgz#14c15ed2edada9f1ab3283ec4dda11625e356fc4"
     dependencies:
       npmlog "^4.1.2"
   
-  opencv4nodejs@^4.7.1:
-    version "4.7.1"
-    resolved "https://registry.yarnpkg.com/opencv4nodejs/-/opencv4nodejs-4.7.1.tgz#8ec09a0fd357c6c5d1e03e244daf0173b1be60ff"
+  opencv4nodejs@^4.9.0:
+    version "4.9.0"
+    resolved "https://registry.yarnpkg.com/opencv4nodejs/-/opencv4nodejs-4.9.0.tgz#29c7eddcb9d09550e876650539973dff1ec94460"
     dependencies:
-      macro-inferno "^0.2.1"
-      nan "^2.10.0"
-      native-node-utils "0.1.2"
-      opencv-build "0.0.14"
+      macro-inferno "^0.2.2"
+      nan "^2.11.0"
+      native-node-utils "0.1.4"
+      opencv-build "0.0.15"
     optionalDependencies:
       "@types/node" ">6"
   
@@ -8062,14 +8066,18 @@ Lockfile:
       fd-slicer "~1.0.1"
 
 Trace: 
-  Error: Command "dec" not found. Did you mean "dev"?
-      at MessageError.Error (native)
-      at new MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
-      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:87307:17
-      at next (native)
-      at step (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:98:30)
-      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:116:14
-      at Promise.F (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:23451:28)
-      at /usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:95:12
-      at runCommand (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:87312:22)
-      at Object.<anonymous> (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:87412:14)
+  Error: Command failed.
+  Exit code: 1
+  Command: sh
+  Arguments: -c node --max_old_space_size=4096 .electron-vue/dev-runner.js
+  Directory: /Users/luis.agottani/Documents/TCC/electron-main-project
+  Output:
+  
+      at ProcessTermError.Error (native)
+      at ProcessTermError.MessageError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:186:110)
+      at new ProcessTermError (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:226:113)
+      at ChildProcess.<anonymous> (/usr/local/Cellar/yarn/1.5.1_1/libexec/lib/cli.js:30281:17)
+      at emitTwo (events.js:106:13)
+      at ChildProcess.emit (events.js:191:7)
+      at maybeClose (internal/child_process.js:920:16)
+      at Process.ChildProcess._handle.onexit (internal/child_process.js:230:5)

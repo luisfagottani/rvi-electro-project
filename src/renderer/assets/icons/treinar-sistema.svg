@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="20px" viewBox="0 0 16 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Orion_favorite-book</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="RVI-001" transform="translate(-25.000000, -386.000000)" fill="#BBBDC7" fill-rule="nonzero">
+            <g id="Lateral-menu">
+                <g id="Config" transform="translate(0.000000, 330.000000)">
+                    <g id="01" transform="translate(0.000000, 41.000000)">
+                        <g id="Orion_favorite-book" transform="translate(25.000000, 15.000000)">
+                            <path d="M1.42857143,1.42857143 C1.42857143,2.21754964 2.06816464,2.85714286 2.85714286,2.85714286 L14.2857143,2.85714286 L14.2857143,0 L2.85714286,0 C2.06816464,0 1.42857143,0.639593215 1.42857143,1.42857143 Z" id="Shape"></path>
+                            <path d="M2.85714286,4.28571429 C1.27918643,4.28571429 0,3.00652786 0,1.42857143 L0,17.1428571 C0,18.7208136 1.27918643,20 2.85714286,20 L15.7142857,20 L15.7142857,4.28571429 L2.85714286,4.28571429 Z M10.5,15.8214286 L7.85714286,13.8571429 L5.21428571,15.7857143 L6.25,12.6785714 L3.57142857,10.7142857 L6.85714286,10.7142857 L7.85714286,7.64285714 L8.85714286,10.7142857 L12.1428571,10.7142857 L9.5,12.6785714 L10.5,15.8214286 Z" id="Shape"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
