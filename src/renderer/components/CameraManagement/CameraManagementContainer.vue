@@ -2,72 +2,109 @@
   <div class="cadastro">
     <div class="cadastro__progress" v-bind:style="{width: progress + '%'}"></div>
     <div class="cadastro__content">
-      <FirstStepComponent
+      <CameraFormInfo
+        v-bind:key="1"
         @next-step="nextStep()" 
-        v-if="step == 1"
+        v-if="step == 1 && show == 1"
         :cameraData="cameraData"
         @camera-data="val => { this.cameraData = val }">
-      </FirstStepComponent>
+      </CameraFormInfo>
     
-      <FinalStepComponent
+      <CameraVideo
+       v-bind:key="2"
         v-if="step == 2"
         @back-step="backStep()"
         :cameraData="cameraData"
         @finish="saveCamera">
-      </FinalStepComponent>
+      </CameraVideo>
     </div>
   </div>
 </template>
-
 
 <script>
 const fs = require("fs");
 const Store = require("electron-store");
 const store = new Store();
 
-import FirstStepComponent from "@/components/AddCamera/FirstStepComponent";
-import FinalStepComponent from "@/components/AddCamera/FinalStepComponent";
+import CameraFormInfo from "@/components/CameraManagement/CameraFormInfo";
+import CameraVideo from "@/components/CameraManagement/CameraVideo";
 
 export default {
-  name: "AddCameraContainer",
+  name: "CameraManagement",
+
   components: {
-    FirstStepComponent,
-    FinalStepComponent
+    CameraFormInfo,
+    CameraVideo
   },
+
   data() {
     return {
       step: 1,
       progress: 50,
-      cameraData: {}
+      cameraData: {},
+      show: false
     };
   },
+
+  mounted() {
+    if (this.$route.params.id) {
+      this.cameraData = this.$store.getters.getCamera(this.$route.params.id);
+      this.show = true;
+    } else {
+      this.show = true;
+    }
+  },
+
   methods: {
     nextStep: function(event) {
-      this.$store.dispatch("setLoading", true);
       this.step += 1;
       this.progress += 50;
+      this.$store.dispatch("setLoading", true);
     },
     backStep: function(event) {
-      this.cameraData = {};
       this.step -= 1;
       this.progress = 50;
     },
     saveCamera: function(val) {
-      const min = 99;
-      const max = 999999;
-      const random = Math.floor(Math.random() * (max - min + 1)) + min;
-      const self = this;
-
+      if (this.$route.params.id) {
+        this.updateCamera(val);
+      } else {
+        this.addCamera(val);
+      }
+      this.$store.dispatch("showSuccess");
+      if (this.$route.params.id) {
+        this.$router.push({
+          name: "camera",
+          params: { id: camera.camId },
+          query: { canvasMode: "show" }
+        });
+      } else {
+        this.$router.push({ name: "lista-cameras" });
+      }
+    },
+    updateCamera: function(val) {
       this.cameraData = val;
-      this.cameraData.camId = String(new Date().getTime() + random);
+      this.cameraData.camId = this.$route.params.id;
+      this.cameraData.path = store.path;
+      store.delete(this.$route.params.id);
+
+      store.set(this.cameraData.camId, this.cameraData);
+      if (this.cameraData.typeFile.length > 0) {
+        this.cameraData.typeFile = "1";
+      }
+      this.$store.dispatch("updateCamera", this.cameraData);
+    },
+    addCamera: function(val) {
+      this.cameraData = val;
+      this.cameraData.camId = String(
+        new Date().getTime() + Math.floor(Math.random() * (999999 - 99 + 1))
+      );
       this.cameraData.path = store.path;
       store.set(this.cameraData.camId, this.cameraData);
       if (this.cameraData.typeFile.length > 0) {
         this.cameraData.typeFile = "1";
       }
       this.$store.dispatch("addCamera", this.cameraData);
-      this.$store.dispatch("showSuccess");
-      this.$router.push({ name: "lista-cameras" });
     }
   }
 };
@@ -117,4 +154,3 @@ export default {
   }
 }
 </style>
-

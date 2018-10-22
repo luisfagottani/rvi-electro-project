@@ -1,12 +1,18 @@
 <template>
   <div>
-    <h2 class="title">Atualize as informações de sua câmera</h2>
+    <div v-if="this.$route.params.id">
+       <h2 class="title">Atualize as informações de sua câmera</h2>
+    </div>
+    <div v-else>
+      <h2 class="title">Cadastre sua nova câmera.</h2>
+      <h3 class="subtitle">Preencha as informações sobre a câmera a ser cadastrada.</h3>
+    </div>
 
     <div class="container">
       <div class="field">
         <div class="control">
           <input v-bind="showBtn" class="input" type="text" v-model="data.nameCam"
-            >
+            placeholder="Nome da camera">
         </div>
       </div>
 
@@ -71,23 +77,38 @@
 <script>
 import UploadSvg from "@/assets/icons/upload.svg";
 export default {
-  name: "FirstEditStep",
+  name: "CameraInfo",
   props: ["cameraData"],
   data: function() {
     return {
       data: {
-        nameCam: this.cameraData.nameCam,
-        camType: this.cameraData.camType,
-        urlCam: this.cameraData.urlCam,
-        typeFile: this.cameraData.typeFile,
-        typeIp: this.cameraData.typeIp,
-        spots: this.cameraData.spots,
-        height: this.cameraData.height,
-        width: this.cameraData.width
+        nameCam: "",
+        camType: "",
+        urlCam: "",
+        typeFile: "",
+        typeIp: "motion",
+        spots: [],
+        width: "",
+        heigth: ""
       },
       UploadSvg: UploadSvg,
       disabledBtn: true
     };
+  },
+  mounted() {
+    if (this.$route.params.id) {
+      this.data.nameCam = this.cameraData.nameCam;
+      this.data.camType = this.cameraData.camType;
+      this.data.urlCam = this.cameraData.urlCam;
+      this.data.typeFile = this.cameraData.typeFile;
+      this.data.typeIp = this.cameraData.typeIp;
+      this.data.spots = this.cameraData.spots;
+      this.data.height = this.cameraData.height;
+      this.data.width = this.cameraData.width;
+    }
+  },
+  beforeDestroy() {
+    console.log("filho, quase destruido", this.cameraData);
   },
   computed: {
     // uma função "getter" computada (computed getter)
@@ -97,11 +118,6 @@ export default {
       } else {
         this.disabledBtn = true;
       }
-    }
-  },
-  watch: {
-    "data.camType": function() {
-      this.data.urlCam = "";
     }
   },
   methods: {
@@ -138,10 +154,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.title {
-  margin-bottom: 36px;
-}
-
 .file-input {
   // Box Model
   display: none;

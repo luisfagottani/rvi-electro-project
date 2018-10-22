@@ -4,13 +4,13 @@
           <span>Câmeras</span>
         </li>
         <li class="menu__item">
-          <router-link to="/home/lista-cameras">
+          <router-link :to="{ name: 'lista-cameras'}">
             <img :src="GaleraIcon" alt="">
             <span>Galeria</span>
           </router-link>
         </li>
         <li class="menu__item">
-          <router-link :to="{ name: 'add-camera', params: {id: this.$route.params.id }, query: {canvasMode: 'add'}}">
+          <router-link :to="{ name: 'add-camera'}">
             <img :src="NewCameraIcon" alt="">
             <span>Nova Camera</span>
           </router-link>

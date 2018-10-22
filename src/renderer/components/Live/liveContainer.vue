@@ -2,7 +2,7 @@
   <div>
     <div class="staging">
       <infoSpots />
-      <showCamera :getCamera="this.cameraData"></showCamera>
+      <ShowCamera :getCamera="this.cameraData"></ShowCamera>
       <div :class="['edit-area', {'edit-area--open': showMenuEdit}]" v-on:click="showMenuEdit = !showMenuEdit">
         <div class="edit-area__icon">
           <span></span>
@@ -31,7 +31,7 @@ const Store = require("electron-store");
 const store = new Store();
 
 import infoSpots from "./infoSpots";
-import showCamera from "./showCamera";
+import ShowCamera from "./ShowCamera";
 import EditIcon from "@/assets/icons/edit-button.svg";
 import DeleteIcon from "@/assets/icons/delete-button.svg";
 
@@ -39,7 +39,7 @@ export default {
   name: "liveContainer",
   components: {
     infoSpots,
-    showCamera
+    ShowCamera
   },
   data: function() {
     return {

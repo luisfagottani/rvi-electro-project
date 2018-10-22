@@ -1,6 +1,12 @@
 <template>
   <div>
-    <h2 class="title">Atualize as informações de sua câmera</h2>
+    <div v-if="this.$route.params.id">
+       <h2 class="title">Atualize as informações de sua câmera</h2>
+    </div>
+    <div v-else>
+      <h2 class="title">Cadastre sua nova câmera.</h2>
+      <h3 class="subtitle">Preencha as informações sobre a câmera a ser cadastrada.</h3>
+    </div>
 
     <div class="pklot">
       <div :class="['pklot__info', {'pklot__info--hidden': !showInfoPklot}]">
@@ -14,7 +20,7 @@
         </div>
       </div>
       <div class="pklot__canvas">
-        <CanvasSpotDraw v-if="showCanvas" @spots="val => (cameraData.spots = val)" :cameraData="cameraData" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasSpotDraw>
+        <CanvasSpotDraw v-if="showCanvas" @spots="val => (this.spots = val)" :cameraData="cameraData" :videoDimensions="dimensions" @showRemoveCta="val => (deleteSpotStatus = val)" @showAddSpot="val => (showInfoPklot = val)"></CanvasSpotDraw>
         <video id="video-cam" v-if="cameraData.camType === '2'" muted style=""  autoplay :src="cameraData.urlCam"></video>
         <img class="video-img" width="100%" v-if="cameraData.camType === '1' && cameraData.typeIp === 'motion'" style="-webkit-user-select: none;" :src="cameraData.urlCam">
         <canvas id="canvasVideo"  v-if="cameraData.camType === '1' && cameraData.typeIp === 'rstp'"></canvas>
@@ -26,7 +32,7 @@
         </div>
         <div class="pklot__cta-group">
           <a class="pklot__cta pklot__cta--white" v-on:click="backStep()">Voltar</a>
-          <a :class="['pklot__cta pklot__cta--blue', {'hidden': cameraData.spots.length > 0 ? false : true}]" @click="finish()">Atualizar</a>
+          <a :class="['pklot__cta pklot__cta--blue', {'hidden': this.spots.length > 0 ? false : true}]" @click="finish()"><span v-if="this.$route.params.id">Atualizar</span><span v-else>Cadastrar</span></a>
         </div>
       </div>
     </div>
@@ -41,54 +47,8 @@ import Demarcacao from "@/assets/demarcacao.png";
 import { setTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
-  name: "FinalStepEdit",
-  beforeDestroy() {
-    clearInterval(this.clearInterval);
-  },
-  mounted() {
-    const canvas = document.querySelector(".pklot__canvas");
-    const info = document.querySelector(".pklot__info-area");
-    const pklot = document.querySelector(".pklot");
-
-    if (this.cameraData.camType === "2") {
-      var v = document.getElementById("video-cam");
-      v.addEventListener(
-        "loadedmetadata",
-        e => {
-          const canvas = document.querySelector(".pklot__canvas");
-          const info = document.querySelector(".pklot__info-area");
-          const pklot = document.querySelector(".pklot");
-          this.dimensions.widthVideo = canvas.offsetWidth;
-          this.dimensions.heightVideo = canvas.offsetHeight;
-          this.showCanvas = true;
-          canvas.style.height = this.dimensions.heightVideo + "px";
-          pklot.style.height = this.dimensions.heightVideo + "px";
-          info.style.height = this.dimensions.heightVideo + "px";
-          this.$store.dispatch("setLoading", false);
-        },
-        false
-      );
-    } else if (this.cameraData.typeIp === "motion") {
-      const cameraImg = document.querySelector(".video-img");
-      cameraImg.addEventListener("load", e => {
-        const canvas = document.querySelector(".pklot__canvas");
-        const info = document.querySelector(".pklot__info-area");
-        const pklot = document.querySelector(".pklot");
-        this.dimensions.widthVideo = canvas.offsetWidth;
-        this.dimensions.heightVideo = canvas.offsetHeight;
-        this.showCanvas = true;
-        canvas.style.height = this.dimensions.heightVideo + "px";
-        pklot.style.height = this.dimensions.heightVideo + "px";
-        info.style.height = this.dimensions.heightVideo + "px";
-        this.$store.dispatch("setLoading", false);
-      });
-    } else {
-      this.vCap = new cv.VideoCapture(this.cameraData.urlCam);
-      this.canvasVideo = document.getElementById("canvasVideo");
-      this.ctx = this.canvasVideo.getContext("2d");
-      this.startInterval();
-    }
-  },
+  name: "CameraVideo",
+  props: ["cameraData"],
   components: {
     CanvasSpotDraw
   },
@@ -105,10 +65,77 @@ export default {
       HelpIcon: HelpIcon,
       DemarcacaoExemplo: Demarcacao,
       showHelp: false,
-      showCanvas: false
+      showCanvas: false,
+      spots: []
     };
   },
-  props: ["cameraData"],
+  beforeDestroy() {
+    clearInterval(this.clearInterval);
+  },
+  mounted() {
+    const canvas = document.querySelector(".pklot__canvas");
+    const info = document.querySelector(".pklot__info-area");
+    const pklot = document.querySelector(".pklot");
+
+    if (this.cameraData.camType === "2") {
+      var v = document.getElementById("video-cam");
+      v.addEventListener(
+        "loadedmetadata",
+        e => {
+          const canvas = document.querySelector(".pklot__canvas");
+          const info = document.querySelector(".pklot__info-area");
+          const pklot = document.querySelector(".pklot");
+          this.cameraData.width = canvas.offsetWidth;
+          this.cameraData.height = canvas.offsetHeight;
+          this.dimensions.widthVideo = canvas.offsetWidth;
+          this.dimensions.heightVideo = canvas.offsetHeight;
+          this.showCanvas = true;
+          canvas.style.height = this.dimensions.heightVideo + "px";
+          pklot.style.height = this.dimensions.heightVideo + "px";
+          info.style.height = this.dimensions.heightVideo + "px";
+          this.$store.dispatch("setLoading", false);
+        },
+        false
+      );
+      v.addEventListener("error", e => {
+        this.$store.dispatch("setLoading", false);
+        this.$emit("back-step");
+        this.$store.dispatch(
+          "setMessageAlert",
+          "Não foi possivel conectar a câmera"
+        );
+      });
+    } else if (this.cameraData.typeIp === "motion") {
+      const cameraImg = document.querySelector(".video-img");
+      cameraImg.addEventListener("load", e => {
+        const canvas = document.querySelector(".pklot__canvas");
+        const info = document.querySelector(".pklot__info-area");
+        const pklot = document.querySelector(".pklot");
+        this.cameraData.width = canvas.offsetWidth;
+        this.cameraData.height = canvas.offsetHeight;
+        this.dimensions.widthVideo = canvas.offsetWidth;
+        this.dimensions.heightVideo = canvas.offsetHeight;
+        this.showCanvas = true;
+        canvas.style.height = this.dimensions.heightVideo + "px";
+        pklot.style.height = this.dimensions.heightVideo + "px";
+        info.style.height = this.dimensions.heightVideo + "px";
+        this.$store.dispatch("setLoading", false);
+      });
+      cameraImg.addEventListener("error", e => {
+        this.$store.dispatch("setLoading", false);
+        this.$emit("back-step");
+        this.$store.dispatch(
+          "setMessageAlert",
+          "Não foi possivel conectar a câmera"
+        );
+      });
+    } else {
+      this.vCap = new cv.VideoCapture(this.cameraData.urlCam);
+      this.canvasVideo = document.getElementById("canvasVideo");
+      this.ctx = this.canvasVideo.getContext("2d");
+      this.startInterval();
+    }
+  },
   methods: {
     backStep: function() {
       this.$emit("back-step");
@@ -119,7 +146,8 @@ export default {
       }, 10);
     },
     finish: function() {
-      if (this.cameraData.spots.length > 0) {
+      if (this.spots.length > 0) {
+        this.cameraData.spots = this.spots;
         this.cameraData.width = this.dimensions.widthVideo;
         this.cameraData.height = this.dimensions.heightVideo;
         this.$emit("finish", this.cameraData);
@@ -131,6 +159,8 @@ export default {
       if (!frame.empty) {
         let width = frame.cols;
         let height = frame.rows;
+        this.cameraData.width = width;
+        this.cameraData.height = height;
         let newWidth = document.querySelector(".pklot__canvas").offsetWidth;
 
         if (width !== newWidth) {
@@ -167,7 +197,7 @@ export default {
       this.$children[0].addSpot();
     },
     removeSpot: function() {
-      this.$children[0].excludeSpot();
+      this.$children[0].removeSpot();
     },
     cancelAddSpot: function() {
       this.$children[0].cancelAddSpot();

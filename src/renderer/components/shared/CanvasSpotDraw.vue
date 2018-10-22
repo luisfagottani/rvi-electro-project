@@ -40,8 +40,8 @@ export default {
         this.mouseSelects();
       }
 
-      if (this.cameraData.spots) {
-        this.spots = this.cameraData.spots;
+      if (this.cameraData && this.cameraData.spots) {
+        this.spots = Object.assign([], this.cameraData.spots);
         this.populateSpots();
         this.resizeCanvas();
       } else {
@@ -307,13 +307,14 @@ export default {
       var spotToRemove = this.canvas.getActiveObject();
       this.canvas.remove(spotToRemove);
 
-      this.spots = this.spots.filter(spot => {
+      let spotAux = this.spots.filter(spot => {
         if (spotToRemove.id === spot.id) {
-          return false;
-        } else {
           return true;
+        } else {
+          return false;
         }
       });
+      this.spots.splice(spotAux, 1);
       this.$emit("spots", this.spots);
     },
     populateSpots: function() {

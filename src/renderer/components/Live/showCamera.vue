@@ -18,14 +18,14 @@ import CanvasSpotDraw from "@/components/shared/CanvasSpotDraw";
 import { setTimeout, clearTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
-  name: "showCamera",
+  name: "ShowCamera",
   components: {
     CanvasSpotDraw
   },
   data() {
     return {
       canvas: "",
-      // client: this.$store.getters.getClientApi,
+      client: this.$store.getters.getClientApi,
       errorConection: false,
       vCap: "",
       canvasVideo: "",
@@ -106,31 +106,31 @@ export default {
       this.canvasVideo.height = vm.height;
       this.canvasVideo.width = vm.width;
 
-      // const SelectObject = function(spot) {
-      //   vm.$store.getters.getCanvas.getObjects().forEach(function(o) {
-      //     if (o.id === spot.id) {
-      //       if (spot.statusSpot === 1) {
-      //         o.set("fill", "rgba(255, 0, 0, 0.3)");
-      //         o.set("stroke", "rgba(255, 0, 0, 0.3)");
-      //       } else {
-      //         o.set("fill", "rgba(0,255,0, 0.4)");
-      //         o.set("stroke", "rgba(0,255,0, 0.4)");
-      //       }
-      //     }
-      //   });
+      const SelectObject = function(spot) {
+        vm.$store.getters.getCanvas.getObjects().forEach(function(o) {
+          if (o.id === spot.id) {
+            if (spot.statusSpot === 1) {
+              o.set("fill", "rgba(255, 0, 0, 0.3)");
+              o.set("stroke", "rgba(255, 0, 0, 0.3)");
+            } else {
+              o.set("fill", "rgba(0,255,0, 0.4)");
+              o.set("stroke", "rgba(0,255,0, 0.4)");
+            }
+          }
+        });
 
-      //   vm.getCamera.spots.forEach(function(spots) {
-      //     if (spot.id === spots.id) {
-      //       if (spot.statusSpot === 1) {
-      //         vm.$set(spots, "status", 1);
-      //       } else {
-      //         vm.$set(spots, "status", 0);
-      //       }
-      //     }
-      //   });
+        vm.getCamera.spots.forEach(function(spots) {
+          if (spot.id === spots.id) {
+            if (spot.statusSpot === 1) {
+              vm.$set(spots, "status", 1);
+            } else {
+              vm.$set(spots, "status", 0);
+            }
+          }
+        });
 
-      //   vm.$store.getters.getCanvas.renderAll();
-      // };
+        vm.$store.getters.getCanvas.renderAll();
+      };
     },
     playVideo: function() {
       let frame = this.vCap.read();
@@ -157,53 +157,60 @@ export default {
         }
       }
 
-      // let frame = this.vCap.read();
-      // if (!frame) {
-      //   this.vCap.set(cv.CAP_PROP_POS_FRAMES, 0);
-      // }
-
-      // let img = frame.resize(this.getCamera.height, this.getCamera.width);
-      // const matRGBA =
-      //   img.channels === 1
-      //     ? img.cvtColor(cv.COLOR_GRAY2RGBA)
-      //     : img.cvtColor(cv.COLOR_BGR2RGBA);
-
-      // // create new ImageData from raw mat data
-      // const imgData = new ImageData(
-      //   new Uint8ClampedArray(matRGBA.getData()),
-      //   img.cols,
-      //   img.rows
-      // );
-
-      // this.vCap.read(src);
-      // cv.imshow("canvasVideo", this.vCap.read());
-
-      // if (i == 80) {
-      //   vm.getCamera.image = cv
-      //     .imencode(".jpg", frame.resize(vm.height, vm.width))
-      //     .toString("base64");
-      //   vm.getCamera.image = Buffer.from(vm.getCamera.image);
-      //   vm.getCamera.width = vm.width;
-      //   vm.getCamera.height = vm.height;
-      //   vm.client.processImage(vm.getCamera, function(err, response) {
-      //     if (!err) {
-      //       vm.errorConection = false;
-      //       if (vm.isLoading !== false) vm.$store.dispatch("setIsLoading");
-      //       response.spots.forEach(element => {
-      //         SelectObject(element);
-      //       });
-      //     } else {
-      //       if (vm.isLoading === false) vm.$store.dispatch("setIsLoading");
-      //       vm.errorConection = true;
-      //     }
-      //   });
-      //   i = 0;
-      // }
+      if (i == 80) {
+      }
     },
-    playMotion: function() {
+    getBase64Image: function(img) {
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      var dataURL = canvas.toDataURL("image/png");
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    },
+    processVagas: function(img) {
+      let frame = "";
+      if (
+        (this.getCamera.camType === "1" || this.getCamera.camType === "2") &&
+        this.getCamera.typeIp !== "motion"
+      ) {
+        frame = img;
+      } else {
+        img = img
+          .replace("data:image/jpeg;base64", "")
+          .replace("data:image/png;base64", ""); //Strip image type prefix
+        const buffer = Buffer.from(img, "base64");
+        frame = cv.imdecode(buffer);
+      }
+      this.getCamera.image = cv
+        .imencode(
+          ".jpg",
+          frame.resize(this.getCamera.height, this.getCamera.width)
+        )
+        .toString("base64");
+      this.getCamera.image = Buffer.from(this.getCamera.image);
+      this.client.processImage(this.getCamera, (err, response) => {
+        debugger;
+        // if (!err) {
+        //   this.errorConection = false;
+        //   if (this.isLoading !== false) vm.$store.dispatch("setIsLoading");
+        //   response.spots.forEach(element => {
+        //     SelectObject(element);
+        //   });
+        // } else {
+        //   if (vm.isLoading === false) vm.$store.dispatch("setIsLoading");
+        //   vm.errorConection = true;
+        // }
+      });
+      i = 0;
+    },
+    playMotion: function(e) {
       if (this.$store.getters.getLoadingState) {
         this.$store.dispatch("setLoading", false);
       }
+      const base64 = this.getBase64Image(e.srcElement);
+      this.processVagas(base64);
       this.motionVideo.src =
         this.motionVideo.src.replace(/\?[^\n]*$/, "?") + new Date().getTime(); // 'this' refers to the image
     },

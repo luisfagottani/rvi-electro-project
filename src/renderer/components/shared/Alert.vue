@@ -23,6 +23,7 @@ export default {
   position: absolute;
   top: 10px;
   right: 20px;
+  z-index: 20;
 
   // Box Model
   min-width: 200px;

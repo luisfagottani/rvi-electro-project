@@ -11,29 +11,29 @@ const router = new Router({
     {
       path: '/home',
       name: 'home',
-      component: require('@/presentations/mainPresentation').default,
+      component: require('@/presentations/MainPresentation').default,
       children: [{
           path: 'lista-cameras',
           name: 'lista-cameras',
-          component: require('@/components/ListaCameras/listaCameras').default
+          component: require('@/components/ListaCameras/ListaCameras').default
         },
         {
           // when /home/camera/:id is matched
           path: 'camera/:id',
           name: 'camera',
-          component: require('@/components/Live/liveContainer').default
+          component: require('@/components/Live/LiveContainer').default
         },
         {
           // when /home/camera/:id is matched
           path: 'camera/edit/:id',
           name: 'edit-camera',
-          component: require('@/components/EditCamera/editCameraContainer').default
+          component: require('@/components/CameraManagement/CameraManagementContainer').default
         },
         {
-          // when /home/add-camera is matched
-          path: 'add-camera',
+          // when /home/camera/add is matched
+          path: 'camera/add/',
           name: 'add-camera',
-          component: require('@/components/AddCamera/AddCameraContainer').default
+          component: require('@/components/CameraManagement/CameraManagementContainer').default
         }
       ]
     }
