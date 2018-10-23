@@ -26,6 +26,9 @@ export default {
   mounted() {
     this.init();
   },
+  beforeDestroy() {
+    this.$store.dispatch("setCanvas", "");
+  },
   methods: {
     init() {
       this.canvas = new fabric.Canvas("canvas_paint");
@@ -33,7 +36,6 @@ export default {
       this.canvas.setWidth(this.videoDimensions.widthVideo);
 
       this.canvas.selection = false;
-
       if (this.canvasMode === "edit" || this.canvasMode === "add") {
         this.clickCanvas();
         this.mouseMove();
@@ -47,6 +49,7 @@ export default {
       } else {
         this.spots = [];
       }
+      this.$store.dispatch("setCanvas", this.canvas);
     },
     clickCanvas: function() {
       var self = this;

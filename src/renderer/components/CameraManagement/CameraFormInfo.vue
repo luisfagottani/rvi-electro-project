@@ -89,7 +89,7 @@ export default {
         typeIp: "motion",
         spots: [],
         width: "",
-        heigth: ""
+        height: ""
       },
       UploadSvg: UploadSvg,
       disabledBtn: true
