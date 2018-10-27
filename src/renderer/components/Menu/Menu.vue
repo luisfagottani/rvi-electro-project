@@ -10,21 +10,21 @@
           </router-link>
         </li>
         <li class="menu__item">
-          <router-link :to="{ name: 'add-camera'}">
+          <router-link :to="{ name: 'add-camera', query: { canvasMode: 'add' }}">
             <img :src="NewCameraIcon" alt="">
             <span>Nova Camera</span>
-          </router-link>
-        </li>
-        <li class="menu__item">
-          <router-link to="teste">
-            <img :src="BackupIcon" alt="">
-            <span>Backup</span>
           </router-link>
         </li>
         <li class="menu__item menu__item--title">
           <span>Configurações</span>
         </li>
-        <li class="menu__item">
+        <li class="menu__item" v-on:click="this.backup">
+          <a>
+            <img :src="BackupIcon" alt="">
+            <span>Backup</span>
+          </a>
+        </li>
+        <!-- <li class="menu__item">
           <router-link to="teta">
             <img :src="SuperviserSystemIcon" alt="">
             <span>Treinar sistema</span>
@@ -35,7 +35,7 @@
             <img :src="SettingsIcon" alt="">
             <span>Personalizar</span>
           </router-link>
-        </li>
+        </li> -->
       <!-- <li @click="showModalAddCamera" class="menu__item">
         <a href="#">
           <img :src="CameraIcon" alt="">
@@ -64,6 +64,8 @@ import NewCameraIcon from "@/assets/icons/new-camera.svg";
 import BackupIcon from "@/assets/icons/backup.svg";
 import SuperviserSystemIcon from "@/assets/icons/treinar-sistema.svg";
 import SettingsIcon from "@/assets/icons/personalizar.svg";
+const Store = require("electron-store");
+const store = new Store();
 
 export default {
   name: "Menu",
@@ -76,7 +78,11 @@ export default {
       SuperviserSystemIcon: SuperviserSystemIcon
     };
   },
-  methods: {}
+  methods: {
+    backup: function() {
+      console.log(store.get());
+    }
+  }
 };
 </script>
 

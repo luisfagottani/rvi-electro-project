@@ -66,7 +66,8 @@ export default {
       DemarcacaoExemplo: Demarcacao,
       showHelp: false,
       showCanvas: false,
-      spots: []
+      spots: [],
+      thumb: ""
     };
   },
   beforeDestroy() {
@@ -80,7 +81,7 @@ export default {
     if (this.cameraData.camType === "2") {
       var v = document.getElementById("video-cam");
       v.addEventListener(
-        "loadedmetadata",
+        "loadeddata",
         e => {
           const canvas = document.querySelector(".pklot__canvas");
           const info = document.querySelector(".pklot__info-area");
@@ -93,12 +94,19 @@ export default {
           canvas.style.height = this.dimensions.heightVideo + "px";
           pklot.style.height = this.dimensions.heightVideo + "px";
           info.style.height = this.dimensions.heightVideo + "px";
+          debugger;
+          const base64 = this.getBase64Image(e.srcElement, "video");
+          this.thumb = base64;
           this.$store.dispatch("setLoading", false);
         },
         false
       );
       v.addEventListener("error", e => {
-        this.$store.dispatch("setLoading", false);
+        this.$store.dispatch("setLoading", {
+          status: false,
+          message: "",
+          showMessage: false
+        });
         this.$emit("back-step");
         this.$store.dispatch(
           "setMessageAlert",
@@ -120,9 +128,15 @@ export default {
         pklot.style.height = this.dimensions.heightVideo + "px";
         info.style.height = this.dimensions.heightVideo + "px";
         this.$store.dispatch("setLoading", false);
+        const base64 = this.getBase64Image(e.srcElement, "motion");
+        this.thumb = base64;
       });
       cameraImg.addEventListener("error", e => {
-        this.$store.dispatch("setLoading", false);
+        this.$store.dispatch("setLoading", {
+          status: false,
+          message: "",
+          showMessage: false
+        });
         this.$emit("back-step");
         this.$store.dispatch(
           "setMessageAlert",
@@ -140,6 +154,21 @@ export default {
     backStep: function() {
       this.$emit("back-step");
     },
+    getBase64Image: function(img, type) {
+      const canvas = document.createElement("canvas");
+      if (type == "video") {
+        canvas.width = img.clientWidth;
+        canvas.height = img.clientHeight;
+      } else {
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+      }
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const dataURL = canvas.toDataURL("image/png");
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    },
     startInterval: function() {
       this.clearInterval = setInterval(() => {
         this.playVideo();
@@ -150,6 +179,7 @@ export default {
         this.cameraData.spots = this.spots;
         this.cameraData.width = this.dimensions.widthVideo;
         this.cameraData.height = this.dimensions.heightVideo;
+        this.cameraData.thumb = this.thumb;
         this.$emit("finish", this.cameraData);
       }
     },
@@ -179,7 +209,7 @@ export default {
           img.channels === 1
             ? img.cvtColor(cv.COLOR_GRAY2RGBA)
             : img.cvtColor(cv.COLOR_BGR2RGBA);
-
+        this.thumb = img;
         // create new ImageData from raw mat data
         const imgData = new ImageData(
           new Uint8ClampedArray(matRGBA.getData()),
@@ -189,7 +219,11 @@ export default {
         this.ctx.putImageData(imgData, 0, 0);
         if (this.$store.getters.getLoadingState) {
           this.showCanvas = true;
-          this.$store.dispatch("setLoading", false);
+          this.$store.dispatch("setLoading", {
+            status: false,
+            message: "Cˆ",
+            showMessage: true
+          });
         }
       }
     },

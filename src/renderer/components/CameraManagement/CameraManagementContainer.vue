@@ -25,6 +25,7 @@
 const fs = require("fs");
 const Store = require("electron-store");
 const store = new Store();
+const cv = require("opencv4nodejs");
 
 import CameraFormInfo from "@/components/CameraManagement/CameraFormInfo";
 import CameraVideo from "@/components/CameraManagement/CameraVideo";
@@ -59,11 +60,31 @@ export default {
     nextStep: function(event) {
       this.step += 1;
       this.progress += 50;
-      this.$store.dispatch("setLoading", true);
+      this.$store.dispatch("setLoading", {
+        status: true,
+        message: "Carregando camera..",
+        showMessage: true
+      });
     },
     backStep: function(event) {
       this.step -= 1;
       this.progress = 50;
+    },
+    saveThumbnail: function(img) {
+      let frame = "";
+      if (
+        this.cameraData.camType === "1" &&
+        (this.cameraData.camType === "2" && this.cameraData.typeIp !== "motion")
+      ) {
+        frame = img;
+      } else {
+        img = img
+          .replace("data:image/jpeg;base64", "")
+          .replace("data:image/png;base64", ""); //Strip image type prefix
+        const buffer = Buffer.from(img, "base64");
+        frame = cv.imdecode(buffer);
+      }
+      cv.imwrite("static/thumbs/" + this.cameraData.camId + ".png", frame);
     },
     saveCamera: function(val) {
       if (this.$route.params.id) {
@@ -73,9 +94,14 @@ export default {
       }
       this.$store.dispatch("showSuccess");
       if (this.$route.params.id) {
+        this.$store.dispatch("setLoading", {
+          status: true,
+          message: "Carregando Câmera..",
+          showMessage: true
+        });
         this.$router.push({
           name: "camera",
-          params: { id: camera.camId },
+          params: { id: this.$route.params.id },
           query: { canvasMode: "show" }
         });
       } else {
@@ -86,6 +112,8 @@ export default {
       this.cameraData = val;
       this.cameraData.camId = this.$route.params.id;
       this.cameraData.path = store.path;
+      this.saveThumbnail(this.cameraData.thumb);
+      delete this.cameraData["thumb"];
       store.delete(this.$route.params.id);
 
       store.set(this.cameraData.camId, this.cameraData);
@@ -99,6 +127,8 @@ export default {
       this.cameraData.camId = String(
         new Date().getTime() + Math.floor(Math.random() * (999999 - 99 + 1))
       );
+      this.saveThumbnail(this.cameraData.thumb);
+      delete this.cameraData["thumb"];
       this.cameraData.path = store.path;
       store.set(this.cameraData.camId, this.cameraData);
       if (this.cameraData.typeFile.length > 0) {
