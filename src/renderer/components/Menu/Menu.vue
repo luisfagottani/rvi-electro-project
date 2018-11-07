@@ -66,6 +66,8 @@ import SuperviserSystemIcon from "@/assets/icons/treinar-sistema.svg";
 import SettingsIcon from "@/assets/icons/personalizar.svg";
 const Store = require("electron-store");
 const store = new Store();
+const { dialog } = require("electron").remote;
+const fs = require("fs");
 
 export default {
   name: "Menu",
@@ -80,7 +82,15 @@ export default {
   },
   methods: {
     backup: function() {
-      console.log(store.get());
+      var savePath = dialog.showSaveDialog({});
+
+      fs.writeFile(savePath, JSON.stringify(store.get()), function(err) {
+        if (err) {
+          alert("Erro ao salvar o arquivo");
+        } else {
+          alert("Backup salvo");
+        }
+      });
     }
   }
 };

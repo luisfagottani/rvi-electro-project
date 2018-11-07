@@ -1,7 +1,7 @@
 <template>
   <div class="camera-show">
     <div class="camera-show__palco">
-      <CanvasSpotDraw v-if="showCanvas" :cameraData="this.getCamera" :videoDimensions="dimensions" ></CanvasSpotDraw>
+      <CanvasSpotDraw v-if="showCanvas" :cameraData="this.getCamera" @idSpot="val => showModalSpotCorrection(val)"  :videoDimensions="dimensions" ></CanvasSpotDraw>
       <img id="videoImg" class="video-img" width="100%" v-show="this.getCamera.camType === '1' && this.getCamera.typeIp === 'motion'" style="-webkit-user-select: none;" :src="this.getCamera.urlCam + '?time=1'">
       <canvas id="canvasVideo"  v-show="(this.getCamera.camType === '1' || this.getCamera.camType === '2') && this.getCamera.typeIp !== 'motion'"></canvas>
     </div>
@@ -9,18 +9,21 @@
       <h2 class="title">Câmera não disponível... :(</h2>
       <p class="subtitle">Não foi possivel conectar a câmera, verifique sua internet e endereço cadastrado.</p>
     </div>
+    <ChangeStatus v-show="showModal"  @stateCorrection="val => stateCorrection(val)" />
   </div>
 </template>
 
 
 <script>
 import CanvasSpotDraw from "@/components/shared/CanvasSpotDraw";
+import ChangeStatus from "@/components/shared/ChangeStatus";
 import { setTimeout, clearTimeout } from "timers";
 const cv = require("opencv4nodejs");
 export default {
   name: "ShowCamera",
   components: {
-    CanvasSpotDraw
+    CanvasSpotDraw,
+    ChangeStatus
   },
   data() {
     return {
@@ -38,7 +41,10 @@ export default {
       motionVideo: "",
       videoNotDisplay: false,
       showCanvas: false,
-      repeat: 0
+      repeat: 0,
+      correctState: "",
+      showModal: false,
+      theSpot: ""
     };
   },
   props: ["getCamera"],
@@ -201,9 +207,13 @@ export default {
         )
         .toString("base64");
       this.getCamera.image = Buffer.from(this.getCamera.image);
+      if (this.$store.getters.getLoadingState) {
+        this.getCamera.newCamera = 1;
+      } else {
+        this.getCamera.newCamera = 0;
+      }
       this.client.processImage(this.getCamera, (err, response) => {
         if (!err) {
-          console.log(response);
           response.spots.forEach(element => {
             this.changeStatusSpot(element);
           });
@@ -246,6 +256,31 @@ export default {
         "Não foi possivel conectar a câmera"
       );
       this.videoNotDisplay = true;
+    },
+    showModalSpotCorrection: function(val) {
+      this.showModal = true;
+      this.theSpot = val;
+    },
+
+    stateCorrection: function(val) {
+      this.showModal = false;
+      let aux = Object.assign({}, this.getCamera);
+      let objectSpot = Object.assign(
+        {},
+        aux.spots.find(x => x.id === this.theSpot)
+      );
+      objectSpot.status = val;
+      aux.spots = objectSpot;
+      console.log(objectSpot.status);
+      this.client.stateCorrection(aux, (err, response) => {
+        if (!err) {
+          console.log(response);
+        }
+        if (err) {
+          console.log(err);
+        }
+      });
+      this.$children[1].selectCanvasClear();
     }
   }
 };

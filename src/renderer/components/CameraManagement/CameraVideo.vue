@@ -94,7 +94,6 @@ export default {
           canvas.style.height = this.dimensions.heightVideo + "px";
           pklot.style.height = this.dimensions.heightVideo + "px";
           info.style.height = this.dimensions.heightVideo + "px";
-          debugger;
           const base64 = this.getBase64Image(e.srcElement, "video");
           this.thumb = base64;
           this.$store.dispatch("setLoading", false);

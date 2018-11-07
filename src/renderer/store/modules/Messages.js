@@ -15,7 +15,6 @@ const mutations = {
     }, 1800);
   },
   SET_LOADING_STATE(state, payload) {
-    console.log(payload)
     state.loadingState = payload.status;
     state.message = payload.message;
     state.showMessage = payload.showMessage

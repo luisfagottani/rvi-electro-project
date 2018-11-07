@@ -107,9 +107,6 @@ export default {
       this.data.width = this.cameraData.width;
     }
   },
-  beforeDestroy() {
-    console.log("filho, quase destruido", this.cameraData);
-  },
   computed: {
     // uma função "getter" computada (computed getter)
     showBtn: function() {
