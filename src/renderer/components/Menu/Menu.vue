@@ -24,12 +24,13 @@
             <span>Backup</span>
           </a>
         </li>
-        <!-- <li class="menu__item">
-          <router-link to="teta">
+       <li class="menu__item">
+          <router-link :to="{ name: 'select-camera'}">
             <img :src="SuperviserSystemIcon" alt="">
             <span>Treinar sistema</span>
           </router-link>
         </li>
+        <!--
         <li class="menu__item">
           <router-link to="teste">
             <img :src="SettingsIcon" alt="">

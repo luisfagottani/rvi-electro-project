@@ -2,6 +2,7 @@
   <div class="modal">
     <div class="modal__content">
       <h2 class="modal__title">Corrigir estado da vaga</h2>
+      <a class="modal__close" v-on:click="closeModal(1)">X</a>
       <button class="modal__cta modal__cta--red" v-on:click="processSpot(1)">Ocupada</button>
       <button class="modal__cta modal__cta--green" v-on:click="processSpot(0)">Disponível</button>
     </div>
@@ -13,6 +14,9 @@ export default {
   methods: {
     processSpot: function(val) {
       this.$emit("stateCorrection", val);
+    },
+    closeModal: function(val) {
+      this.$emit("closeModal");
     }
   }
 };
@@ -44,6 +48,9 @@ export default {
 
     flex-direction: column;
     align-items: center;
+
+    // Position
+    position: relative;
 
     // Visual
     background-color: #1a1e30;
@@ -89,6 +96,29 @@ export default {
         background-color: lighten($color: #176f17, $amount: 10);
       }
     }
+  }
+
+  &__close {
+    // Box Model
+    width: 20px;
+    height: 20px;
+    border: 2px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 14px;
+
+    position: absolute;
+    right: 15px;
+    top: 15px;
+
+    cursor: pointer;
+
+    // Visual
+    border-radius: 50%;
   }
 }
 </style>

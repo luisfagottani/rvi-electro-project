@@ -9,7 +9,7 @@
       <h2 class="title">Câmera não disponível... :(</h2>
       <p class="subtitle">Não foi possivel conectar a câmera, verifique sua internet e endereço cadastrado.</p>
     </div>
-    <ChangeStatus v-show="showModal"  @stateCorrection="val => stateCorrection(val)" />
+    <ChangeStatus v-show="showModal" @closeModal="showModal = false & $children[1].selectCanvasClear()"  @stateCorrection="val => stateCorrection(val)" />
   </div>
 </template>
 
@@ -271,7 +271,6 @@ export default {
       );
       objectSpot.status = val;
       aux.spots = objectSpot;
-      console.log(objectSpot.status);
       this.client.stateCorrection(aux, (err, response) => {
         if (!err) {
           console.log(response);
@@ -280,6 +279,29 @@ export default {
           console.log(err);
         }
       });
+
+      this.$store.getters.getCanvas.getObjects().forEach(function(o) {
+        if (o.id === objectSpot.id) {
+          if (objectSpot.status === 1) {
+            o.set("fill", "rgba(255, 0, 0, 0.3)");
+            o.set("stroke", "rgba(255, 0, 0, 0.3)");
+          } else {
+            o.set("fill", "rgba(0,255,0, 0.4)");
+            o.set("stroke", "rgba(0,255,0, 0.4)");
+          }
+        }
+      });
+
+      this.getCamera.spots.forEach(spots => {
+        if (objectSpot.id === spots.id) {
+          if (objectSpot.status === 1) {
+            this.$set(spots, "status", 1);
+          } else {
+            this.$set(spots, "status", 0);
+          }
+        }
+      });
+      this.$store.getters.getCanvas.renderAll();
       this.$children[1].selectCanvasClear();
     }
   }

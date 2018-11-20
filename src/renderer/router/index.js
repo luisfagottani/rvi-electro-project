@@ -18,10 +18,21 @@ const router = new Router({
           component: require('@/components/ListaCameras/ListaCameras').default
         },
         {
+          path: 'select-camera',
+          name: 'select-camera',
+          component: require('@/components/TreinarSistema/selectCamera').default
+        },
+        {
           // when /home/camera/:id is matched
           path: 'camera/:id',
           name: 'camera',
           component: require('@/components/Live/LiveContainer').default
+        },
+        {
+          // when /home/camera/:id is matched
+          path: 'camera/:id',
+          name: 'camera-training',
+          component: require('@/components/TreinarSistema/LiveContainer').default
         },
         {
           // when /home/camera/:id is matched
