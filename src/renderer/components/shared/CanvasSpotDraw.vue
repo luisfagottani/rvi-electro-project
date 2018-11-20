@@ -31,6 +31,7 @@ export default {
   },
   methods: {
     init() {
+      var self = this;
       this.canvas = new fabric.Canvas("canvas_paint");
       this.canvas.setHeight(this.videoDimensions.heightVideo);
       this.canvas.setWidth(this.videoDimensions.widthVideo);
@@ -40,6 +41,10 @@ export default {
         this.clickCanvas();
         this.mouseMove();
         this.mouseSelects();
+      } else {
+        this.canvas.on("selection:created", function(options) {
+          self.$emit("idSpot", options.target.id);
+        });
       }
 
       if (this.cameraData && this.cameraData.spots) {
@@ -63,6 +68,9 @@ export default {
           }
         }
       });
+    },
+    selectCanvasClear: function() {
+      this.canvas.discardActiveObject();
     },
     mouseMove: function() {
       const self = this;
@@ -309,14 +317,7 @@ export default {
     removeSpot(retangularSpot) {
       var spotToRemove = this.canvas.getActiveObject();
       this.canvas.remove(spotToRemove);
-
-      let spotAux = this.spots.filter(spot => {
-        if (spotToRemove.id === spot.id) {
-          return true;
-        } else {
-          return false;
-        }
-      });
+      let spotAux = this.spots.findIndex(x => x.id === spotToRemove.id);
       this.spots.splice(spotAux, 1);
       this.$emit("spots", this.spots);
     },

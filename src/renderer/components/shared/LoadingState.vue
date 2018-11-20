@@ -1,13 +1,16 @@
 <template>
   <div :class="['mask', {'mask--show': showLoading}]">
-    <div class="logo">
-      <span class="logo__big-circle">
-        <span class="left"></span>
-        <span class="right"></span>
-        <span class="top"></span>
-        <span class="bottom"></span>
-      </span>
-      <span class="logo__small-circle"></span>
+    <div class="mask__content">
+      <div class="logo">
+        <span class="logo__big-circle">
+          <span class="left"></span>
+          <span class="right"></span>
+          <span class="top"></span>
+          <span class="bottom"></span>
+        </span>
+        <span class="logo__small-circle"></span>
+      </div>
+      <div :class="['logo__status', {'show': showMessageLoading.show}]">{{showMessageLoading.message}}</div>
     </div>
   </div>
 </template>
@@ -17,6 +20,9 @@ export default {
   computed: {
     showLoading: function() {
       return this.$store.getters.getLoadingState;
+    },
+    showMessageLoading: function() {
+      return this.$store.getters.getLoadingMessage;
     }
   }
 };
@@ -45,6 +51,23 @@ export default {
     opacity: 1;
     visibility: visible;
   }
+
+  &__content {
+    // Position
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+
+    width: 220px;
+    height: 210px;
+    margin: auto;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
 }
 .logo {
   // Box Model
@@ -66,6 +89,21 @@ export default {
   .mask--show & {
     transition: 0.4s ease-in-out 0.3s transform;
     transform: scale(1.5);
+  }
+
+  &__status {
+    // Typography
+    font-size: 15px;
+    color: #fff;
+    font-weight: bold;
+
+    opacity: 0;
+    transition: 0.4s ease-in-out opacity;
+
+    &.show {
+      transition: 0.4s ease-in-out opacity;
+      opacity: 1;
+    }
   }
 
   &__big-circle {

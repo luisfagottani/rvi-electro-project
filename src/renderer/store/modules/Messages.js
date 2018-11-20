@@ -2,18 +2,22 @@ const state = {
   showSuccess: false,
   loadingState: false,
   alertMessage: "",
-  showAlert: false
+  showAlert: false,
+  message: '',
+  showMessage: false
 };
 
 const mutations = {
   SET_SUCCESS_STATE(state) {
     state.showSuccess = !state.showSuccess;
-    setTimeout(function() {
+    setTimeout(function () {
       state.showSuccess = !state.showSuccess;
     }, 1800);
   },
-  SET_LOADING_STATE(state, status) {
-    state.loadingState = status;
+  SET_LOADING_STATE(state, payload) {
+    state.loadingState = payload.status;
+    state.message = payload.message;
+    state.showMessage = payload.showMessage
   },
   SET_MESSAGE_ALERT(state, message) {
     state.alertMessage = message;
@@ -31,6 +35,12 @@ let getters = {
   getLoadingState: state => {
     return state.loadingState;
   },
+  getLoadingMessage: state => {
+    return {
+      "message": state.message,
+      "show": state.showMessage
+    };
+  },
   getMessageAlert: state => {
     return state.alertMessage;
   },
@@ -40,13 +50,19 @@ let getters = {
 };
 
 const actions = {
-  showSuccess({ commit }) {
+  showSuccess({
+    commit
+  }) {
     commit("SET_SUCCESS_STATE");
   },
-  setLoading({ commit }, status) {
-    commit("SET_LOADING_STATE", status);
+  setLoading({
+    commit
+  }, payload) {
+    commit("SET_LOADING_STATE", payload);
   },
-  setMessageAlert({ commit }, message) {
+  setMessageAlert({
+    commit
+  }, message) {
     commit("SET_MESSAGE_ALERT", message);
   }
 };

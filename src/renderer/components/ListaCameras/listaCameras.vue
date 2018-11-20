@@ -3,7 +3,7 @@
     <ul class="camera-menu" v-if="menuCams.length > 0">
       <li class="camera-menu__item" v-on:click="changeCamera(camera.camId)"  :key="camera.camId" v-for="camera in menuCams">
         <router-link :to="{ name: 'camera', params: {id: camera.camId}, query: {canvasMode: 'show'}}">
-          <img :src="ExampleImage" alt="">
+          <img :src="path + camera.camId + '.png'" alt="">
           <span>{{camera.nameCam}}</span>
         </router-link>
       </li>
@@ -23,12 +23,17 @@ export default {
   data() {
     return {
       ExampleImage: ExampleImage,
-      PlusCamera: PlusCamera
+      PlusCamera: PlusCamera,
+      path: "static/thumbs/"
     };
   },
   beforeRouteLeave(to, from, next) {
     if (to.name === "camera") {
-      this.$store.dispatch("setLoading", true);
+      this.$store.dispatch("setLoading", {
+        status: true,
+        message: "",
+        showMessage: false
+      });
       this.sleep(2000).then(() => {
         next();
       });
@@ -42,7 +47,11 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("setLoading", false);
+    this.$store.dispatch("setLoading", {
+      status: false,
+      message: "",
+      showMessage: false
+    });
   },
   methods: {
     changeCamera: function(id) {

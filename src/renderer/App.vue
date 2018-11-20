@@ -35,7 +35,11 @@ import { setTimeout, setInterval } from "timers";
 export default {
   name: "rviapp",
   beforeMount() {
-    this.$store.dispatch("setLoading", true);
+    this.$store.dispatch("setLoading", {
+      status: true,
+      message: "Iniciando..",
+      showMessage: true
+    });
     this.initSystem();
   },
   methods: {
